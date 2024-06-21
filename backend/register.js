@@ -3,21 +3,74 @@ const router = express.Router();
 const db = require('../database/db');
 const { generateUniqueIdentification } = require('./utils');
 
-// Endpunkt für /get_BLZ
+const getAllBLZ = () => {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT BLZ FROM BankName';
+        db.all(query, [], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+};
+
+const checkBLZ = (BLZ) => {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT BankName FROM BankName WHERE BLZ = ?';
+        db.get(query, [BLZ], (err, row) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(row);
+            }
+        });
+    });
+};
+
+const insertPerson = (SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr) => {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO Person (SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        db.run(query, [SVNR, firstName, lastName, phoneNr1, phoneNr2 || null, ZIP, street, city, streetNr], function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+};
+
+const insertEmployee = (SVNR, accountBalance, accountNr, BLZ) => {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO Employee (SVNR, AccountBalance, AccountNr, BLZ) VALUES (?, ?, ?, ?)`;
+        db.run(query, [SVNR, accountBalance, accountNr, BLZ], function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+};
+
+const insertInstructor = (identification, currentDate, SVNR) => {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO Instructor (Identification, HiringDate, SVNR) VALUES (?, ?, ?)`;
+        db.run(query, [identification, currentDate, SVNR], function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+};
+
 router.get('/get_BLZ', async (req, res) => {
     try {
-        const getAllBLZ = () => {
-            return new Promise((resolve, reject) => {
-                const query = 'SELECT BLZ FROM BankName';
-                db.all(query, [], (err, rows) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(rows);
-                    }
-                });
-            });
-        };
+
 
         const blzList = await getAllBLZ();
         res.status(200).json(blzList);
@@ -26,7 +79,6 @@ router.get('/get_BLZ', async (req, res) => {
     }
 });
 
-// Endpunkt für /register
 router.post('/register', async (req, res) => {
     const {
         SVNR,
@@ -48,58 +100,6 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        const checkBLZ = (BLZ) => {
-            return new Promise((resolve, reject) => {
-                const query = 'SELECT BankName FROM BankName WHERE BLZ = ?';
-                db.get(query, [BLZ], (err, row) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(row);
-                    }
-                });
-            });
-        };
-
-        const insertPerson = (SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr) => {
-            return new Promise((resolve, reject) => {
-                const query = `INSERT INTO Person (SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-                db.run(query, [SVNR, firstName, lastName, phoneNr1, phoneNr2 || null, ZIP, street, city, streetNr], function (err) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve();
-                    }
-                });
-            });
-        };
-
-        const insertEmployee = (SVNR, accountBalance, accountNr, BLZ) => {
-            return new Promise((resolve, reject) => {
-                const query = `INSERT INTO Employee (SVNR, AccountBalance, AccountNr, BLZ) VALUES (?, ?, ?, ?)`;
-                db.run(query, [SVNR, accountBalance, accountNr, BLZ], function (err) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve();
-                    }
-                });
-            });
-        };
-
-        const insertInstructor = (identification, currentDate, SVNR) => {
-            return new Promise((resolve, reject) => {
-                const query = `INSERT INTO Instructor (Identification, HiringDate, SVNR) VALUES (?, ?, ?)`;
-                db.run(query, [identification, currentDate, SVNR], function (err) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve();
-                    }
-                });
-            });
-        };
-
         const BLZRow = await checkBLZ(BLZ);
         if (!BLZRow) {
             return res.status(400).json({ error: 'BLZ does not exist in the BankName table' });

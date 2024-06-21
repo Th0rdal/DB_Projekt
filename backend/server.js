@@ -3,7 +3,8 @@ const path = require('path');
 const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
-const registerRoutes = require('./register'); // Importiere die Routen
+const registerRoutes = require('./register');
+const loginRoutes = require('./login'); // Importiere die Login-Routen
 
 //const db = require('../database/db');
 
@@ -17,8 +18,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'build', 'index.html'));
 });
 
-// Verwende die ausgelagerten Routen
 app.use('/', registerRoutes);
+app.use('/', loginRoutes);
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
