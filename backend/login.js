@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
 
         res.cookie('identification', identification, { httpOnly: true, secure: true, sameSite: 'Strict' });
 
-        res.status(200).json({ message: 'Login successful', user });
+        res.status(200).json({ message: 'Login successful' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
