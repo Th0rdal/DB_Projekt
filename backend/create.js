@@ -14,7 +14,7 @@ const checkCourseName = (courseName) => {
             if (err) {
                 reject(err);
             } else {
-                resolve(row ? true : false); // Wenn eine Zeile gefunden wurde, existiert der Kursname bereits
+                resolve(!!row); // Wenn eine Zeile gefunden wurde, existiert der Kursname bereits
             }
         });
     });
@@ -38,15 +38,15 @@ const insertCourse = async (courseName, orgCount, prepTime) => {
     });
 };
 
-const insertScriptType = async (autor, pdf) => {
+const insertScriptType = async (author, pdf) => {
     const exists = await checkCourseName(courseName);
     if (exists) {
         throw new Error('Course name already exists');
     }
 
     return new Promise((resolve, reject) => {
-        const query = `INSERT INTO ScriptType (Autor, PDF) VALUES (?, ?, ?)`;
-        db.run(query, [autor, pdf], function (err) {
+        const query = `INSERT INTO ScriptType (Author, PDF) VALUES (?, ?, ?)`;
+        db.run(query, [author, pdf], function (err) {
             if (err) {
                 reject(err);
             } else {
@@ -104,11 +104,11 @@ router.post('/create_course', async (req, res) => {
 
         const SVNR = await getSVNRbyIdentification(identification);
         const result = await getNameBySVNR(SVNR);
-        const autor = `${result.FirstName} ${result.LastName}`;
+        const author = `${result.FirstName} ${result.LastName}`;
         const pdf = 0; //DUMMY
 
         await insertCourse(courseName, orgCount, prepTime);
-        await insertScriptType(autor, pdf);
+        await insertScriptType(author, pdf);
 
         res.status(200).json({ message: 'created course successfully!' });
     } catch (err) {
