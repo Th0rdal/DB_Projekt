@@ -4,8 +4,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
 const { checkIdentification } = require('./session');
+//const { generateUniqueScriptNr } = require('./utils');
 
-// ++++++++++++++++++++++++++++ CREATE COURSES +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++ CREATE COURSES + SCRIPTTYPE +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 const checkCourseName = (courseName) => {
     return new Promise((resolve, reject) => {
         const query = 'SELECT CourseName FROM Course WHERE CourseName = ?';
@@ -37,6 +38,53 @@ const insertCourse = async (courseName, orgCount, prepTime) => {
     });
 };
 
+const insertScriptType = async (autor, pdf) => {
+    const exists = await checkCourseName(courseName);
+    if (exists) {
+        throw new Error('Course name already exists');
+    }
+
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO ScriptType (Autor, PDF) VALUES (?, ?, ?)`;
+        db.run(query, [autor, pdf], function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+};
+
+const getSVNRbyIdentification = async (identification) => {
+
+    return new Promise((resolve, reject) => {
+        const query = `SELECT SVNR FROM Instructor WHERE Identification = ?`;
+        db.get(query, [identification], (err, row) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(row);
+            }
+        });
+    });
+};
+
+const getNameBySVNR = async (SVNR) => {
+
+    return new Promise((resolve, reject) => {
+        const query = `SELECT FirstName, LastName FROM Person WHERE SVNR = ?`;
+        db.get(query, [SVNR], (err, row) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(row);
+            }
+        });
+    });
+};
+
+
 router.post('/create_course', async (req, res) => {
     const { courseName, orgCount, prepTime} = req.body;
     const identification = req.cookies.identification;
@@ -54,7 +102,13 @@ router.post('/create_course', async (req, res) => {
             return res.status(400).json({ error: 'identification does not exist in the Instructor table' });
         }
 
+        const SVNR = await getSVNRbyIdentification(identification);
+        const result = await getNameBySVNR(SVNR);
+        const autor = `${result.FirstName} ${result.LastName}`;
+        const pdf = 0; //DUMMY
+
         await insertCourse(courseName, orgCount, prepTime);
+        await insertScriptType(autor, pdf);
 
         res.status(200).json({ message: 'created course successfully!' });
     } catch (err) {
