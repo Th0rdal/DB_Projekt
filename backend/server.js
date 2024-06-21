@@ -14,8 +14,10 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "frontend", "build", "index.html"));
 });
 
+//test login um connectigify zu checken funktioniert
 app.post("/login", (req, res) => {
   console.log("juhu");
+  res.json({ svnr: "123456790" });
 });
 
 app.listen(port, () => {
