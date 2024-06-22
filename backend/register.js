@@ -42,6 +42,8 @@ const insertPerson = (SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street
     });
 };
 
+insertPerson(2, "asdf", "asd", 202, 23424, 32, "asdf", "wei", "asdf");
+
 const insertEmployee = (SVNR, accountBalance, accountNr, BLZ) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO Employee (SVNR, AccountBalance, AccountNr, BLZ) VALUES (?, ?, ?, ?)`;
