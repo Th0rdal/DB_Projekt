@@ -1,7 +1,55 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const DBManager = require('./DBManager');
+class DBAbstraction {
 
-const dbPath = path.resolve(__dirname, 'database.db');
-const db = new sqlite3.Database(dbPath);
+    static async get(query, variables) {
+        const db = DBManager.getInstance();
+        const connection = await db.getConnection();
+        let resultSet = null;
+        try {
+            const stmt = connection.prepare(query);
+            resultSet = stmt.get(variables);
+        } catch (error) {
+            console.error('Error:', error.message);
+        } finally {
+            db.returnConnection(connection);
+        }
 
-module.exports = db;
+        return resultSet;
+    }
+
+    static async all(query, variables) {
+        const db = DBManager.getInstance();
+        const connection = await db.getConnection();
+        let resultSet = null;
+        try {
+            const stmt = connection.prepare(query);
+            resultSet = stmt.all(variables);
+        } catch (error) {
+            console.error('Error:', error.message);
+        } finally {
+            db.returnConnection(connection);
+        }
+
+        return resultSet;
+    }
+
+    static async run(query, variables) {
+        const db = DBManager.getInstance();
+        const connection = await db.getConnection();
+        let resultSet = null;
+        try {
+            const stmt = connection.prepare(query);
+            resultSet = stmt.run(variables);
+        } catch (error) {
+            console.error('Error:', error.message);
+        } finally {
+            db.returnConnection(connection);
+        }
+
+        return resultSet;
+    }
+}
+
+module.exports = DBAbstraction;
+
+
