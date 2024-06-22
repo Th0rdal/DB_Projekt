@@ -32,17 +32,17 @@ const getIdentificationBySVNR = (SVNR) => {
 router.post('/login', async (req, res) => {
     const { SVNR } = req.body;
 
-    if (!SVNR) {
+    if (!SVNR) { //alles richtig im formular angegeben?
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        const user = await getUserBySVNR(SVNR);
+        const user = await getUserBySVNR(SVNR); //checken ob es SVNR gibt
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        const identification = await getIdentificationBySVNR(SVNR);
+        const identification = await getIdentificationBySVNR(SVNR); //identification für cookie holen
         if (!identification) {
             return res.status(404).json({ error: 'Identification not found' });
         }

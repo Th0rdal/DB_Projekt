@@ -39,13 +39,9 @@ const insertCourse = async (courseName, orgCount, prepTime) => {
 };
 
 const insertScriptType = async (author, pdf) => {
-    const exists = await checkCourseName(courseName);
-    if (exists) {
-        throw new Error('Course name already exists');
-    }
 
     return new Promise((resolve, reject) => {
-        const query = `INSERT INTO ScriptType (Author, PDF) VALUES (?, ?, ?)`;
+        const query = `INSERT INTO ScriptType (Author, PDF) VALUES (?, ?)`;
         db.run(query, [author, pdf], function (err) {
             if (err) {
                 reject(err);

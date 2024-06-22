@@ -31,7 +31,7 @@ const checkBLZ = (BLZ) => {
 
 const insertPerson = (SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr) => {
     return new Promise((resolve, reject) => {
-        const query = `INSERT INTO Person (SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const query = `INSERT INTO Person (SVNR, FirstName, LastName, PhoneNr1, PhoneNr2, ZIP, Street, City, StreetNr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         db.run(query, [SVNR, firstName, lastName, phoneNr1, phoneNr2 || null, ZIP, street, city, streetNr], function (err) {
             if (err) {
                 reject(err);
@@ -70,8 +70,6 @@ const insertInstructor = (identification, currentDate, SVNR) => {
 
 router.get('/get_BLZ', async (req, res) => {
     try {
-
-
         const blzList = await getAllBLZ();
         res.status(200).json(blzList);
     } catch (err) {
@@ -112,7 +110,7 @@ router.post('/register', async (req, res) => {
         await insertEmployee(SVNR, accountBalance, accountNr, BLZ);
         await insertInstructor(identification, currentDate, SVNR);
 
-        res.status(200).json({ message: 'User registered successfully', data: req.body });
+        res.status(200).json({ message: 'User registered successfully' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
