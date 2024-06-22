@@ -7,16 +7,14 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (localStorage.getItem("isLoggedIn") === "True") {
       navigate("/home");
     }
   }, [navigate]);
-
+*/
   const submitButtonClicked = async (e) => {
     e.preventDefault();
-
-    // console.log(userName, password)
 
     await axios
       .post(
