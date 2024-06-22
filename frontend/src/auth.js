@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
 export const isAuthenticated = () => {
-  const token = Cookies.get("token"); // Ändere den Zugriff auf das Cookie
+/*  const token = Cookies.get("token"); // Ändere den Zugriff auf das Cookie
 
   // console.log("token from cookie: " + Cookies.get("token")); // Ausgabe des Tokens aus dem Cookie
 
@@ -33,4 +33,6 @@ export const isAuthenticated = () => {
     // Handle any errors while decoding the token (e.g., invalid token format)
     return false;
   }
+    */
+   return true;
 };

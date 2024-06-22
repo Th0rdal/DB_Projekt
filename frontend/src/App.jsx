@@ -5,39 +5,49 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-
-// import of pages -> always also define the name of the page
-import HomePage from "./pages/homePage";
-import Navbar from "./modules/components/navbar";
-import Register from "./pages/register";
-import ExtendedSearch from "./pages/extendedSearch";
-
+import Dashboard from "./pages/Dashboard.jsx";
+import Navbar from "./modules/components/Navbar.jsx";
 import { isAuthenticated } from "./auth";
-import Upload from "./pages/upload";
-import Rangliste from "./pages/rangliste";
+import Login from "./pages/Login.jsx";
+import Registration from "./pages/Registration.jsx";
+import CreateCourse from "./pages/CreateCourse.jsx";
+import CreateAddresses from "./pages/CreateAddresses.jsx";
+import CreateSeminar from "./pages/CreateSeminar.jsx";
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Register />} />
         <Route
-          path="/home"
-          element={isAuthenticated() ? <HomePage /> : <Navigate to="/" />}
+          path="/"
+          element={
+            isAuthenticated() ? <Login /> : <Navigate to="/register" />
+          }
         />
         <Route
-          path="/rangliste"
-          element={isAuthenticated() ? <Rangliste /> : <Navigate to="/" />}
+          path="/dashboard"
+          element={isAuthenticated() ? <Dashboard /> : <Navigate to="/" />}
         />
         <Route
-          path="/erweiterteSuche"
-          element={isAuthenticated() ? <ExtendedSearch /> : <Navigate to="/" />}
+          path="/login"
+          element={isAuthenticated() ? <Login /> : <Navigate to="/" />}
         />
-
         <Route
-          path="/upload"
-          element={isAuthenticated() ? <Upload /> : <Navigate to="/" />}
+          path="/register"
+          element={isAuthenticated() ? <Registration /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/create_course"
+          element={isAuthenticated() ? <CreateCourse /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/create_address"
+          element={isAuthenticated() ? <CreateAddresses /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/create_seminar"
+          element={isAuthenticated() ? <CreateSeminar /> : <Navigate to="/" />}
         />
       </Routes>
     </Router>

@@ -13,22 +13,14 @@ import {
   CNavbarNav,
   CNavItem,
   CNavLink,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownItem,
-  CDropdownDivider,
-  CDropdownMenu,
   CForm,
   CFormInput,
   CButton,
 } from "@coreui/react";
 import "@coreui/coreui/dist/css/coreui.min.css";
-import { isAuthenticated } from "../../auth";
 
 function Navbar() {
   const [visible, setVisible] = useState(false);
-  const [rank, setRank] = useState("");
-  const [rankPoints, setRankPoints] = useState("");
   const [username, setUsername] = useState("");
 
   const navigate = useNavigate();
@@ -37,105 +29,63 @@ function Navbar() {
   const logout = async (e) => {
     Cookies.remove("token");
     setUsername("");
-    setRankPoints("");
-    setRank("");
     navigate("/");
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Query" + JSON.stringify(searchQuery));
   };
 
   useEffect(() => {
     if (!token) {
-      // console.log("token fehlt");
       setUsername("");
     } else {
       try {
         const tokenWithoutBearer = token.replace("Bearer ", "");
-
         const decodedToken = jwtDecode(tokenWithoutBearer);
-
         setUsername(decodedToken.username);
       } catch (error) {
         setUsername("");
       }
     }
-
-    axios
-      .get(`api/rank`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      })
-      .then((response) => {
-        const { rank } = response.data;
-        const { rankPoints } = response.data;
-
-        setRank(rank);
-        setRankPoints(rankPoints);
-        console.log("Response:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, [rank, logout]);
+  }, [logout]);
 
   return (
     <>
       <CNavbar expand="lg" colorScheme="light" className="bg-light">
         <CContainer fluid>
-          <CNavbarBrand href="/">PeerPapers</CNavbarBrand>
+          <CNavbarBrand href="/">DBProject</CNavbarBrand>
           <CNavbarToggler
             aria-label="Toggle navigation"
             aria-expanded={visible}
             onClick={() => setVisible(!visible)}
           />
           <CCollapse className="navbar-collapse" visible={visible}>
-            <CNavbarNav>
-              <CNavItem>
-                <CNavLink href="/home" active>
-                  Home/Bookmarks
+            <CNavbarNav className="me-auto">
+              <CNavItem className="me-5">
+                <CNavLink href="/dashboard" active>
+                  Dashboard
                 </CNavLink>
               </CNavItem>
-              <CNavItem>
-                <CNavLink href="/rangliste" active>
-                  Rangliste
+              <CNavItem className="me-5">
+                <CNavLink href="/create_course" active>
+                  Create Course
+                </CNavLink>
+              </CNavItem>
+              <CNavItem className="me-5">
+                <CNavLink href="/create_address" active>
+                  Create Address
                 </CNavLink>
               </CNavItem>
 
-              <CNavItem>
-                <CNavLink href="/upload" active>
-                  Datei Hochladen
-                </CNavLink>
-              </CNavItem>
-              {/* <CNavItem>
-                <CNavLink href="/register">Register/Login</CNavLink>
-              </CNavItem> */}
-              <CNavItem>
-                <CNavLink href="/erweiterteSuche">
-                  Suche/Erweitertesuche
+              <CNavItem className="me-5">
+                <CNavLink href="/create_seminar" active>
+                  Create Seminar
                 </CNavLink>
               </CNavItem>
             </CNavbarNav>
-            <CForm className="d-flex" onSubmit={handleSubmit}>
-              {/* <CFormInput
-                type="search"
-                className="me-2"
-                placeholder="Search"
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <CButton type="submit" color="success" variant="outline">
-                Search
-              </CButton> */}
+            <div className="ms-auto d-flex align-items-center">
+              <p className="mb-0 me-5">Username: {username}</p>
               <CButton color="success" variant="outline" onClick={logout}>
                 Logout
               </CButton>
-              <p className="ms-4">Username: {username}</p>
-              <p className="ms-4">Rang: {rank}</p>
-              <p className="ms-4">Rang-Punkte: {rankPoints}</p>
-            </CForm>
+            </div>
           </CCollapse>
         </CContainer>
       </CNavbar>
