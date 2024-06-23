@@ -1,37 +1,39 @@
 const db = require('../database/db');
+const e = require("express");
+const DBAbstraction = require('../database/db');
 
-function generateUniqueIdentification() {
-    return new Promise((resolve, reject) => {
-        const identification = Math.floor(1000000000 + Math.random() * 9000000000).toString(); // 10-stellige Zahl
+async function generateUniqueIdentification() {
+    const identification = Math.floor(1000000000 + Math.random() * 9000000000).toString(); // 10-stellige Zahl
 
-        const checkIdentificationQuery = 'SELECT Identification FROM instructor WHERE Identification = ?';
-        db.get(checkIdentificationQuery, [identification], (err, row) => {
-            if (err) {
-                reject(err);
-            } else if (row) {
-                generateUniqueIdentification().then(resolve).catch(reject);
-            } else {
-                resolve(identification);
-            }
-        });
-    });
+    const checkIdentificationQuery = 'SELECT Identification FROM instructor WHERE Identification = ?';
+
+    try {
+        const row = await DBAbstraction.get(checkIdentificationQuery, [identification]);
+        if (row) {
+            return await generateUniqueIdentification();
+        } else {
+            return identification;
+        }
+    } catch (err) {
+        throw err;
+    }
 }
 
-function generateUniqueEmployeeNr() {
-    return new Promise((resolve, reject) => {
-        const identification = Math.floor(1000000000 + Math.random() * 9000000000).toString(); // 10-stellige Zahl
+async function generateUniqueEmployeeNr() {
+    const employeeNR = Math.floor(1000000000 + Math.random() * 9000000000).toString(); // 10-stellige Zahl
 
-        const checkIdentificationQuery = 'SELECT employeeNR FROM instructor WHERE Identification = ?';
-        db.get(checkIdentificationQuery, [identification], (err, row) => {
-            if (err) {
-                reject(err);
-            } else if (row) {
-                generateUniqueIdentification().then(resolve).catch(reject);
-            } else {
-                resolve(identification);
-            }
-        });
-    });
+    const checkIdentificationQuery = 'SELECT employeeNR FROM employee WHERE employeeNR = ?';
+
+    try {
+        const row = await DBAbstraction.get(checkIdentificationQuery, [employeeNR]);
+        if (row) {
+            return await generateUniqueEmployeeNr();
+        } else {
+            return employeeNR;
+        }
+    } catch (err) {
+        throw err;
+    }
 }
 
 // function generateUniqueScriptNr() {

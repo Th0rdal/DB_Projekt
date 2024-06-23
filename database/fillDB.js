@@ -35,7 +35,7 @@ const createPersonTable = `
 const createBankNameTable = `
     CREATE TABLE IF NOT EXISTS bankname(
         BLZ INTEGER PRIMARY KEY,
-        Bankname TEXT NOT NULL    
+        bankName TEXT NOT NULL    
     )
 `;
 
@@ -52,13 +52,13 @@ const createBankAccountTable = `
 const createEmployeeTable = `
     CREATE TABLE IF NOT EXISTS employee(
         SVNR INTEGER,        
-        employeeNr INTEGER,    
-        accountNr INTEGER,
+        employeeNR INTEGER,    
+        accountNR BIGINT,
         BLZ INTEGER,
         PRIMARY KEY (SVNR),
         FOREIGN KEY (SVNR) REFERENCES person(SVNR),
-        FOREIGN KEY (accountNr) REFERENCES bankAccount(accountNR),
-        FOREIGN KEY (BLZ) REFERENCES bankname(BLZ)
+        FOREIGN KEY (accountNR) REFERENCES bankAccount(accountNR),
+        FOREIGN KEY (BLZ) REFERENCES bankName(BLZ)
     )    
 `;
 
@@ -80,28 +80,28 @@ const createLanguageTable = `
 const createScripttypeTable = `
     CREATE TABLE IF NOT EXISTS scripttype(
         number INTEGER PRIMARY KEY,
-        autor TEXT NOT NULL
+        author TEXT NOT NULL
     )
 `
 
 const createCourseTable = `
     CREATE TABLE IF NOT EXISTS course(
-        coursename TEXT PRIMATE KEY,
-        scripttype INTEGER,
+        courseName TEXT PRIMATE KEY,
+        scriptType INTEGER,
         orgCount TINYINT,
         prepTime TIME,
-        FOREIGN KEY (scripttype) REFERENCES scripttype(number)
+        FOREIGN KEY (scriptType) REFERENCES scriptType(number)
     )
 `
 
 const createPresentCourseTable = `
     CREATE TABLE IF NOT EXISTS presentCourse(
         language TEXT,
-        coursename TEXT,
+        courseName TEXT,
         instructor INTEGER,
         PRIMARY KEY (language, coursename, instructor),
         FOREIGN KEY (language) REFERENCES language(language),
-        FOREIGN KEY (coursename) REFERENCES course(coursename),  
+        FOREIGN KEY (courseName) REFERENCES course(courseName),  
         FOREIGN KEY (instructor) REFERENCES instructor(SVNR)  
     )
 `
@@ -110,22 +110,22 @@ const createAddressTable = `
     CREATE TABLE IF NOT EXISTS address(
         addressID INTEGER PRIMARY KEY,
         ZIP INTEGER,
-        Street TEXT,
-        City TEXT,
-        StreetNR INTEGER  
+        street TEXT,
+        city TEXT,
+        streetNR INTEGER  
     )
 `
 
 const createSeminarTable = `
     CREATE TABLE IF NOT EXISTS seminar(
         addressID INTEGER,
-        coursename TEXT,
+        courseName TEXT,
         instructor INTEGER,
         date DATE,
         time TIME,
         PRIMARY KEY (date, time)
         FOREIGN KEY (addressID) REFERENCES seminar(addressID),
-        FOREIGN KEY (coursename) REFERENCES course(coursename),
+        FOREIGN KEY (courseName) REFERENCES course(courseName),
         FOREIGN KEY (instructor) REFERENCES instructor(SVNR)
     )
 `
