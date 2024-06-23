@@ -5,7 +5,7 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const registerRoutes = require('./register');
-const loginRoutes = require('./login'); // Importiere die Login-Routen
+const loginRoutes = require('./login');
 const createRoutes = require('./create');
 
 //const db = require('../database/db');

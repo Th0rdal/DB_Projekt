@@ -1,108 +1,69 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../database/db");
 const { generateUniqueIdentification } = require("./utils");
+const DBAbstraction = require('../database/db');
 
-const getAllBLZ = () => {
-  return new Promise((resolve, reject) => {
-    const query = "SELECT BLZ FROM BankName";
-    db.all(query, [], (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
-  });
+const getAllBLZ = async () => {
+  try {
+    const query = "SELECT BLZ FROM bankname";
+    const rows = await DBAbstraction.all(query, []);
+    return rows;
+  } catch (err) {
+    throw err;
+  }
 };
 
-const checkBLZ = (BLZ) => {
-  return new Promise((resolve, reject) => {
-    const query = "SELECT BankName FROM BankName WHERE BLZ = ?";
-    db.get(query, [BLZ], (err, row) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(row);
-      }
-    });
-  });
+const checkBLZ = async (BLZ) => {
+  const query = "SELECT BankName FROM BankName WHERE BLZ = ?";
+  try {
+    const row = await DBAbstraction.get(query, [BLZ]);
+    if (row) {
+      return row;
+    } else {
+      throw new Error("No data found");
+    }
+  } catch (err) {
+    throw err;
+  }
 };
 
-const insertPerson = (
-  SVNR,
-  firstName,
-  lastName,
-  phoneNr1,
-  phoneNr2,
-  ZIP,
-  street,
-  city,
-  streetNr
+const insertPerson = async (
+    SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr
 ) => {
-  return new Promise((resolve, reject) => {
-    const query = `INSERT INTO Person (SVNR, FirstName, LastName, PhoneNr1, PhoneNr2, ZIP, Street, City, StreetNr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    db.run(
-      query,
-      [
-        SVNR,
-        firstName,
-        lastName,
-        phoneNr1,
-        phoneNr2 || null,
-        ZIP,
-        street,
-        city,
-        streetNr,
-      ],
-      function (err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      }
-    );
-  });
+  const query = `INSERT INTO person (SVNR, firstname, lastname, phoneNR1, phoneNR2, ZIP, Street, City, StreetNR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  try {
+    await DBAbstraction.run(query, [
+      SVNR, firstName, lastName, phoneNr1, phoneNr2 || null, ZIP, street, city, streetNr,
+    ]);
+  } catch (err) {
+    throw err;
+  }
 };
 
 // insertPerson(2, "asdf", "asd", 202, 23424, 32, "asdf", "wei", "asdf");
 
-const insertEmployee = (SVNR, accountBalance, accountNr, BLZ) => {
-  return new Promise((resolve, reject) => {
-    const query = `INSERT INTO Employee (SVNR, AccountBalance, AccountNr, BLZ) VALUES (?, ?, ?, ?)`;
-    db.run(query, [SVNR, accountBalance, accountNr, BLZ], function (err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+const insertEmployee = async (SVNR, employeeNr, accountNr, BLZ) => {
+  const query = `INSERT INTO employee (SVNR, employeeNr) VALUES (?, ?, ?, ?)`;
+  try {
+    await DBAbstraction.run(query, [SVNR, accountBalance, accountNr, BLZ]);
+  } catch (err) {
+    throw err;
+  }
 };
 
-const insertInstructor = (identification, currentDate, SVNR) => {
-  return new Promise((resolve, reject) => {
-    const query = `INSERT INTO Instructor (Identification, HiringDate, SVNR) VALUES (?, ?, ?)`;
-    db.run(query, [identification, currentDate, SVNR], function (err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+const insertInstructor = async (SVNR, identification, currentDate) => {
+  const query = `INSERT INTO Instructor (SVNR, Identification, HiringDate) VALUES (?, ?, ?)`;
+  try {
+    await DBAbstraction.run(query, [SVNR, identification, currentDate]);
+  } catch (err) {
+    throw err;
+  }
 };
 
 router.get("/get_BLZ", async (req, res) => {
   try {
-    // const blzList = await getAllBLZ();
-    // res.status(200).json(blzList);
-    const blzList = [{ blz: 123 }, { blz: 456 }, { blz: 789 }];
-
-    // Sende d
+    const blzList = await getAllBLZ();
     res.status(200).json(blzList);
-    // console.log(JSON.stringify(blzList));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -110,18 +71,7 @@ router.get("/get_BLZ", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   const {
-    SVNR,
-    firstName,
-    lastName,
-    phoneNr1,
-    phoneNr2,
-    ZIP,
-    street,
-    city,
-    streetNr,
-    accountBalance,
-    accountNr,
-    BLZ,
+    SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr, accountBalance, accountNr, BLZ,
   } = req.body;
   console.log(JSON.stringify(req.body));
   if (
@@ -139,13 +89,9 @@ router.post("/register", async (req, res) => {
   ) {
     return res.status(400).json({ error: "Missing required fields" });
   }
-  console.log("test 1");
 
   try {
-    console.log("test 2");
-
     const BLZRow = await checkBLZ(BLZ);
-    console.log("test 3");
 
     if (!BLZRow) {
       return res
@@ -170,7 +116,6 @@ router.post("/register", async (req, res) => {
     await insertInstructor(identification, currentDate, SVNR);
 
     res.cookie("identification", identification);
-    console.log("Cookie gesetzt:", identification);
     res.status(200).json({ message: "User registered successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });

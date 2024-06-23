@@ -26,16 +26,16 @@ const createPersonTable = `
         phoneNR1 BIGINT,
         phoneNR2 BIGINT,
         ZIP INTEGER,
-        Street TEXT,
-        City TEXT,
-        StreetNR INTEGER  
+        street TEXT,
+        city TEXT,
+        streetNR INTEGER  
     )
 `;
 
 const createEmployeeTable = `
     CREATE TABLE IF NOT EXISTS employee(
         SVNR INTEGER,        
-        employeeNr INTEGER,    
+        employeeNR INTEGER,    
         PRIMARY KEY (SVNR),
         FOREIGN KEY (SVNR) REFERENCES person(SVNR)
     )    
@@ -44,16 +44,16 @@ const createEmployeeTable = `
 const createInstructorTable = `
     CREATE TABLE IF NOT EXISTS instructor(
         SVNR INTEGER PRIMARY KEY,
-        Identification INTEGER UNIQUE NOT NULL,
-        HiringDate DATETIME NOT NULL,    
+        identification INTEGER UNIQUE NOT NULL,
+        hiringDate DATETIME NOT NULL,    
         FOREIGN KEY (SVNR) REFERENCES person(SVNR)
     )
 `;
 
 const createBankNameTable = `
-    CREATE TABLE IF NOT EXISTS bankname(
+    CREATE TABLE IF NOT EXISTS bankName(
         BLZ INTEGER PRIMARY KEY,
-        Bankname TEXT NOT NULL    
+        bankName TEXT NOT NULL    
     )
 `
 
@@ -74,19 +74,19 @@ const createLanguageTable = `
 `
 
 const createScripttypeTable = `
-    CREATE TABLE IF NOT EXISTS scripttype(
+    CREATE TABLE IF NOT EXISTS scriptType(
         number INTEGER PRIMARY KEY,
-        autor TEXT NOT NULL
+        author TEXT NOT NULL
     )
 `
 
 const createCourseTable = `
     CREATE TABLE IF NOT EXISTS course(
-        coursename TEXT PRIMATE KEY,
-        scripttype INTEGER,
+        courseName TEXT PRIMATE KEY,
+        scriptType INTEGER,
         orgCount TINYINT,
         prepTime TIME,
-        FOREIGN KEY (scripttype) REFERENCES scripttype(number)
+        FOREIGN KEY (scriptType) REFERENCES scriptType(number)
     )
 `
 
