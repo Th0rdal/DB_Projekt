@@ -66,7 +66,7 @@ const insertPerson = (
   });
 };
 
-insertPerson(2, "asdf", "asd", 202, 23424, 32, "asdf", "wei", "asdf");
+// insertPerson(2, "asdf", "asd", 202, 23424, 32, "asdf", "wei", "asdf");
 
 const insertEmployee = (SVNR, accountBalance, accountNr, BLZ) => {
   return new Promise((resolve, reject) => {
@@ -96,8 +96,13 @@ const insertInstructor = (identification, currentDate, SVNR) => {
 
 router.get("/get_BLZ", async (req, res) => {
   try {
-    const blzList = await getAllBLZ();
+    // const blzList = await getAllBLZ();
+    // res.status(200).json(blzList);
+    const blzList = [{ blz: 123 }, { blz: 456 }, { blz: 789 }];
+
+    // Sende d
     res.status(200).json(blzList);
+    // console.log(JSON.stringify(blzList));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -134,15 +139,19 @@ router.post("/register", async (req, res) => {
   ) {
     return res.status(400).json({ error: "Missing required fields" });
   }
+  console.log("test 1");
 
   try {
+    console.log("test 2");
+
     const BLZRow = await checkBLZ(BLZ);
+    console.log("test 3");
+
     if (!BLZRow) {
       return res
         .status(400)
         .json({ error: "BLZ does not exist in the BankName table" });
     }
-
     const identification = await generateUniqueIdentification();
     const currentDate = new Date();
 
@@ -160,6 +169,8 @@ router.post("/register", async (req, res) => {
     await insertEmployee(SVNR, accountBalance, accountNr, BLZ);
     await insertInstructor(identification, currentDate, SVNR);
 
+    res.cookie("identification", identification);
+    console.log("Cookie gesetzt:", identification);
     res.status(200).json({ message: "User registered successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });

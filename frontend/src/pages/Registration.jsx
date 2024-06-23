@@ -27,10 +27,14 @@ const Registration = () => {
           { BLZ: "20000" },
           { BLZ: "30000" },
         ];
-        setBlzList(dummyData);
+        // setBlzList(dummyData);
         // TODO checken ob enpoint gibt blz weil backend muss uns beim laden der page über get entpoint blz litse liefern und dann automatish über die blz im backend den bankname setzen
-        /* const response = await axios.get("api/get_BLZ");
-        setBlzList(response.data); */
+        console.log("test");
+        const response = await axios.get("api/get_BLZ");
+        console.log("get enptoint blz");
+        console.log(JSON.stringify(response.data));
+        setBlzList(response.data);
+        // setBlzList(response.data);
       } catch (error) {
         console.error("Error fetching BLZ list", error);
       }
@@ -63,8 +67,8 @@ const Registration = () => {
         withCredentials: true,
       })
       .then((res) => {
-        const { identification } = res.data;
-        document.cookie = `identification=${identification}`;
+        // const { identification } = res.data;
+        // document.cookie = `identification=${identification}`;
         navigate("/");
       })
       .catch((err) => {
@@ -251,9 +255,9 @@ const Registration = () => {
                   <option value="" disabled>
                     Choose...
                   </option>
-                  {blzList.map((blz) => (
-                    <option key={blz.BLZ} value={blz.BLZ}>
-                      {blz.Bankname} - {blz.BLZ}
+                  {blzList.map((blz, index) => (
+                    <option key={index} value={blz.blz}>
+                      - {blz.blz}
                     </option>
                   ))}
                 </select>
