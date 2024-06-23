@@ -3,8 +3,14 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database/db");
+const multer = require("multer");
+
 const { checkIdentification } = require("./session");
 //const { generateUniqueScriptNr } = require('./utils');
+
+// TODO uplaod directory for pdf files
+// Set up multer for file upload handling
+const upload = multer({ dest: "uploads/" }); // Specify your upload directory
 
 // ++++++++++++++++++++++++++++ CREATE COURSES + SCRIPTTYPE +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 const checkCourseName = (courseName) => {
@@ -77,9 +83,14 @@ const getNameBySVNR = async (SVNR) => {
   });
 };
 
-router.post("/create_course", async (req, res) => {
+// TODO logik noch einbauane mit pdf für datnebank weil grad pdf in ulpoad mit uuid gespiehcert
+router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
   const { courseName, orgCount, prepTime } = req.body;
   const identification = req.cookies.identification;
+  const pdfFile = req.file;
+
+  console.log(JSON.stringify(req.body)); // Logs the other form fields
+  console.log(pdfFile); // Logs the file details
 
   if (!identification) {
     return res.status(400).json({ error: "Identification cookie is missing" });
@@ -91,17 +102,20 @@ router.post("/create_course", async (req, res) => {
   try {
     const identificationRow = await checkIdentification(identification);
     if (!identificationRow) {
-      return res
-        .status(400)
-        .json({
-          error: "identification does not exist in the Instructor table",
-        });
+      return res.status(400).json({
+        error: "identification does not exist in the Instructor table",
+      });
     }
 
     const SVNR = await getSVNRbyIdentification(identification);
     const result = await getNameBySVNR(SVNR);
     const author = `${result.FirstName} ${result.LastName}`;
     const pdf = 0; //DUMMY
+
+    // Hier kannst du den Dateiinhalt speichern oder weiter verarbeiten
+    // Beispiel:
+    // const filePath = `uploads/${pdfFile.filename}`;
+    // fs.renameSync(pdfFile.path, filePath);
 
     await insertCourse(courseName, orgCount, prepTime);
     await insertScriptType(author, pdf);
@@ -111,6 +125,8 @@ router.post("/create_course", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
 
 // ++++++++++++++++++++++++++++ CREATE ADDRESSES +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -141,11 +157,9 @@ router.post("/create_address", async (req, res) => {
   try {
     const identificationRow = await checkIdentification(identification);
     if (!identificationRow) {
-      return res
-        .status(400)
-        .json({
-          error: "identification does not exist in the Instructor table",
-        });
+      return res.status(400).json({
+        error: "identification does not exist in the Instructor table",
+      });
     }
 
     await insertAddress(city, ZIP, street, streetNr);
@@ -232,11 +246,9 @@ router.post("/create_seminar", async (req, res) => {
   try {
     const identificationRow = await checkIdentification(identification);
     if (!identificationRow) {
-      return res
-        .status(400)
-        .json({
-          error: "identification does not exist in the Instructor table",
-        });
+      return res.status(400).json({
+        error: "identification does not exist in the Instructor table",
+      });
     }
 
     await insertSeminar(addressID, date, time, course);
