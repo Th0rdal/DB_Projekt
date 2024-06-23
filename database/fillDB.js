@@ -26,36 +26,18 @@ const createPersonTable = `
         phoneNR1 BIGINT,
         phoneNR2 BIGINT,
         ZIP INTEGER,
-        street TEXT,
-        city TEXT,
-        streetNR INTEGER  
-    )
-`;
-
-const createEmployeeTable = `
-    CREATE TABLE IF NOT EXISTS employee(
-        SVNR INTEGER,        
-        employeeNR INTEGER,    
-        PRIMARY KEY (SVNR),
-        FOREIGN KEY (SVNR) REFERENCES person(SVNR)
-    )    
-`;
-
-const createInstructorTable = `
-    CREATE TABLE IF NOT EXISTS instructor(
-        SVNR INTEGER PRIMARY KEY,
-        identification INTEGER UNIQUE NOT NULL,
-        hiringDate DATETIME NOT NULL,    
-        FOREIGN KEY (SVNR) REFERENCES person(SVNR)
+        Street TEXT,
+        City TEXT,
+        StreetNR INTEGER  
     )
 `;
 
 const createBankNameTable = `
-    CREATE TABLE IF NOT EXISTS bankName(
+    CREATE TABLE IF NOT EXISTS bankname(
         BLZ INTEGER PRIMARY KEY,
-        bankName TEXT NOT NULL    
+        Bankname TEXT NOT NULL    
     )
-`
+`;
 
 const createBankAccountTable = `
     CREATE TABLE IF NOT EXISTS bankAccount(
@@ -67,6 +49,28 @@ const createBankAccountTable = `
     )
 `;
 
+const createEmployeeTable = `
+    CREATE TABLE IF NOT EXISTS employee(
+        SVNR INTEGER,        
+        employeeNr INTEGER,    
+        accountNr INTEGER,
+        BLZ INTEGER,
+        PRIMARY KEY (SVNR),
+        FOREIGN KEY (SVNR) REFERENCES person(SVNR),
+        FOREIGN KEY (accountNr) REFERENCES bankAccount(accountNR),
+        FOREIGN KEY (BLZ) REFERENCES bankname(BLZ)
+    )    
+`;
+
+const createInstructorTable = `
+    CREATE TABLE IF NOT EXISTS instructor(
+        SVNR INTEGER PRIMARY KEY,
+        Identification INTEGER UNIQUE NOT NULL,
+        HiringDate DATETIME NOT NULL,    
+        FOREIGN KEY (SVNR) REFERENCES person(SVNR)
+    )
+`;
+
 const createLanguageTable = `
     CREATE TABLE IF NOT EXISTS language(
         language TEXT PRIMARY KEY
@@ -74,19 +78,19 @@ const createLanguageTable = `
 `
 
 const createScripttypeTable = `
-    CREATE TABLE IF NOT EXISTS scriptType(
+    CREATE TABLE IF NOT EXISTS scripttype(
         number INTEGER PRIMARY KEY,
-        author TEXT NOT NULL
+        autor TEXT NOT NULL
     )
 `
 
 const createCourseTable = `
     CREATE TABLE IF NOT EXISTS course(
-        courseName TEXT PRIMATE KEY,
-        scriptType INTEGER,
+        coursename TEXT PRIMATE KEY,
+        scripttype INTEGER,
         orgCount TINYINT,
         prepTime TIME,
-        FOREIGN KEY (scriptType) REFERENCES scriptType(number)
+        FOREIGN KEY (scripttype) REFERENCES scripttype(number)
     )
 `
 
@@ -127,10 +131,10 @@ const createSeminarTable = `
 `
 
 db.exec(createPersonTable);
-db.exec(createEmployeeTable);
-db.exec(createInstructorTable);
 db.exec(createBankNameTable);
 db.exec(createBankAccountTable);
+db.exec(createEmployeeTable);
+db.exec(createInstructorTable);
 db.exec(createLanguageTable);
 db.exec(createScripttypeTable);
 db.exec(createCourseTable);
