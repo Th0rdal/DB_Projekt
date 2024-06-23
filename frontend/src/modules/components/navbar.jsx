@@ -27,7 +27,7 @@ function Navbar() {
   const token = Cookies.get("token");
 
   const logout = async (e) => {
-    Cookies.remove("token");
+    Cookies.remove("identification", { path: "/" });
     setUsername("");
     navigate("/");
   };
