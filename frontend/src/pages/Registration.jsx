@@ -15,7 +15,6 @@ const Registration = () => {
   const [ZIP, setZipCode] = useState("");
   const [city, setCity] = useState("");
   const [accountNr, setAccountNr] = useState("");
-  const [bankName, setBankName] = useState("");
   const [BLZ, setBlz] = useState("");
   const [accountBalance, setAccountBalance] = useState(""); // Added accountBalance state
   const [blzList, setBlzList] = useState([]); // State to store BLZ list
@@ -23,13 +22,13 @@ const Registration = () => {
   useEffect(() => {
     const fetchBLZ = async () => {
       try {
-
-         const dummyData = [
-           { BLZ: "10000" },
-           { BLZ: "20000" },
-           { BLZ: "30000" },
-         ];
-         setBlzList(dummyData);
+        const dummyData = [
+          { BLZ: "10000" },
+          { BLZ: "20000" },
+          { BLZ: "30000" },
+        ];
+        setBlzList(dummyData);
+        // TODO checken ob enpoint gibt blz weil backend muss uns beim laden der page über get entpoint blz litse liefern und dann automatish über die blz im backend den bankname setzen
         /* const response = await axios.get("api/get_BLZ");
         setBlzList(response.data); */
       } catch (error) {
@@ -42,24 +41,28 @@ const Registration = () => {
 
   const registerButtonclicked = (e) => {
     e.preventDefault();
- 
+    let registerFormValues = {
+      firstName,
+      lastName,
+      SVNR,
+      phoneNr1,
+      phoneNr2,
+      street,
+      streetNr,
+      ZIP,
+      city,
+      accountNr,
+      BLZ,
+      accountBalance,
+    };
+
+    console.log(JSON.stringify(registerFormValues));
+
     axios
       .post(
         "api/register",
         {
-          firstName,
-          lastName,
-          SVNR,
-          phoneNr1,
-          phoneNr2,
-          street,
-          streetNr,
-          ZIP,
-          city,
-          accountNr,
-          bankName,
-          BLZ,
-          accountBalance, // Included accountBalance in the request body
+          registerFormValues,
         },
         {
           withCredentials: true,
@@ -82,7 +85,7 @@ const Registration = () => {
       <div
         style={{
           display: "flex",
-          height: "210vh", 
+          height: "210vh",
           alignContent: "center",
           justifyContent: "center",
         }}
@@ -132,12 +135,16 @@ const Registration = () => {
                 SVNR
               </label>
               <input
-                type="text"
+                type="number"
+                maxLength="10"
                 className="form-control"
                 id="SVNR"
-                maxLength="10"
                 value={SVNR}
-                onChange={(e) => setSvnr(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 10) {
+                    setSvnr(e.target.value);
+                  }
+                }}
                 required
               />
             </div>
@@ -184,7 +191,7 @@ const Registration = () => {
                 Street Nr.
               </label>
               <input
-                type="number"
+                type="text"
                 className="form-control"
                 id="streetNr"
                 value={streetNr}
@@ -198,10 +205,15 @@ const Registration = () => {
               </label>
               <input
                 type="number"
+                maxLength="4"
                 className="form-control"
                 id="ZIP"
                 value={ZIP}
-                onChange={(e) => setZipCode(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 4) {
+                    setZipCode(e.target.value);
+                  }
+                }}
                 required
               />
             </div>
@@ -232,19 +244,6 @@ const Registration = () => {
               />
             </div>
             <div className="mb-1">
-              <label htmlFor="bankName" className="form-label">
-                Bank name
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="bankName"
-                value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-1">
               <label htmlFor="BLZ" className="form-label">
                 BLZ
               </label>
@@ -270,7 +269,7 @@ const Registration = () => {
             </div>
             <div className="mb-1">
               <label htmlFor="accountBalance" className="form-label">
-                Account Balance
+                Account Balance (€)
               </label>
               <input
                 type="number"
