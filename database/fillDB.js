@@ -32,12 +32,33 @@ const createPersonTable = `
     )
 `;
 
+const createBankNameTable = `
+    CREATE TABLE IF NOT EXISTS bankname(
+        BLZ INTEGER PRIMARY KEY,
+        Bankname TEXT NOT NULL    
+    )
+`;
+
+const createBankAccountTable = `
+    CREATE TABLE IF NOT EXISTS bankAccount(
+        BLZ INTEGER,
+        accountBalance INTEGER,
+        accountNR BIGINT,
+        PRIMARY KEY (accountNR, BLZ),
+        FOREIGN KEY (BLZ) REFERENCES bankName(BLZ)
+    )
+`;
+
 const createEmployeeTable = `
     CREATE TABLE IF NOT EXISTS employee(
         SVNR INTEGER,        
         employeeNr INTEGER,    
+        accountNr INTEGER,
+        BLZ INTEGER,
         PRIMARY KEY (SVNR),
-        FOREIGN KEY (SVNR) REFERENCES person(SVNR)
+        FOREIGN KEY (SVNR) REFERENCES person(SVNR),
+        FOREIGN KEY (accountNr) REFERENCES bankAccount(accountNR),
+        FOREIGN KEY (BLZ) REFERENCES bankname(BLZ)
     )    
 `;
 
@@ -47,23 +68,6 @@ const createInstructorTable = `
         Identification INTEGER UNIQUE NOT NULL,
         HiringDate DATETIME NOT NULL,    
         FOREIGN KEY (SVNR) REFERENCES person(SVNR)
-    )
-`;
-
-const createBankNameTable = `
-    CREATE TABLE IF NOT EXISTS bankname(
-        BLZ INTEGER PRIMARY KEY,
-        Bankname TEXT NOT NULL    
-    )
-`
-
-const createBankAccountTable = `
-    CREATE TABLE IF NOT EXISTS bankAccount(
-        BLZ INTEGER,
-        accountBalance INTEGER,
-        accountNR BIGINT,
-        PRIMARY KEY (accountNR, BLZ),
-        FOREIGN KEY (BLZ) REFERENCES bankName(BLZ)
     )
 `;
 
@@ -127,10 +131,10 @@ const createSeminarTable = `
 `
 
 db.exec(createPersonTable);
-db.exec(createEmployeeTable);
-db.exec(createInstructorTable);
 db.exec(createBankNameTable);
 db.exec(createBankAccountTable);
+db.exec(createEmployeeTable);
+db.exec(createInstructorTable);
 db.exec(createLanguageTable);
 db.exec(createScripttypeTable);
 db.exec(createCourseTable);
