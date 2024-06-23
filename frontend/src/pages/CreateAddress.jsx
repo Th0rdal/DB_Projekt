@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const CreateAddresses = () => {
+const CreateAddress = () => {
   const [city, setCity] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [street, setStreet] = useState("");
@@ -16,7 +16,7 @@ const CreateAddresses = () => {
     }
 
     try {
-      const response = await axios.post("YOUR_API_ENDPOINT", {
+      const response = await axios.post("api/create_address", {
         city,
         zipCode,
         street,
@@ -124,4 +124,4 @@ const CreateAddresses = () => {
   );
 };
 
-export default CreateAddresses;
+export default CreateAddress;

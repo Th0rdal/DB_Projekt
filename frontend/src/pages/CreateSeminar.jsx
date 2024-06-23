@@ -1,47 +1,47 @@
 import React, { useState, useEffect } from "react";
-// import axios from "axios";
+import axios from "axios";
 
 const CreateSeminar = () => {
-  const [addresses, setAddresses] = useState([
-    // Temporäre Testdaten
-    { id: 1, name: "Address 1" },
-    { id: 2, name: "Address 2" },
-  ]);
-  const [courses, setCourses] = useState([
-    // Temporäre Testdaten
-    { id: 1, name: "Course 1" },
-    { id: 2, name: "Course 2" },
-  ]);
+  const [addresses, setAddresses] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
-  // useEffect(() => {
-  //   const fetchAddresses = async () => {
-  //     try {
-  //       const response = await axios.get("/get_addresses");
-  //       setAddresses(response.data);
-  //       if (response.data.length === 0) {
-  //         alert("No addresses found. Please create one first.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching addresses", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const response = await axios.get("api/get_addresses");
+        setAddresses(response.data || []);
+        if (response.data.length === 0) {
+          alert("No addresses found. Please create one first.");
+        }
+      } catch (error) {
+        console.error("Error fetching addresses", error);
+      }
+    };
 
-  //   const fetchCourses = async () => {
-  //     try {
-  //       const response = await axios.get("/get_courses");
-  //       setCourses(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching courses", error);
-  //     }
-  //   };
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get("api/get_courses");
+        setCourses(response.data || []);
+      } catch (error) {
+        console.error("Error fetching courses", error);
+      }
+    };
 
-  //   fetchAddresses();
-  //   fetchCourses();
-  // }, []);
+    fetchAddresses();
+    fetchCourses();
+  }, []);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -52,23 +52,22 @@ const CreateSeminar = () => {
     }
 
     try {
-      // const sessionId = localStorage.getItem("sessionId");
-      // const svnrResponse = await axios.get(`/get_svnr?sessionId=${sessionId}`);
-      // const svnr = svnrResponse.data.svnr;
+      const formattedDate = formatDate(date);
+      const sessionId = localStorage.getItem("sessionId");
+      const svnrResponse = await axios.get(`api/get_svnr?sessionId=${sessionId}`);
+      const svnr = svnrResponse.data.svnr;
 
-      // const response = await axios.post("/create_seminar", {
-      //   address: selectedAddress,
-      //   courseName: selectedCourse,
-      //   date,
-      //   time,
-      //   svnr,
-      // });
-      // console.log(response.data);
-      // handle success (e.g., show a success message or redirect)
+      const response = await axios.post("api/create_seminar", {
+        address: selectedAddress,
+        courseName: selectedCourse,
+        date: formattedDate,
+        time,
+        svnr,
+      });
+      console.log(response.data);
       alert("Form submitted successfully!");
     } catch (error) {
       console.error(error);
-      // handle error (e.g., show an error message)
     }
   };
 
@@ -100,11 +99,12 @@ const CreateSeminar = () => {
                 onChange={(e) => setSelectedAddress(e.target.value)}
               >
                 <option value="">Select Address</option>
-                {addresses.map((address) => (
-                  <option key={address.id} value={address.id}>
-                    {address.name}
-                  </option>
-                ))}
+                {Array.isArray(addresses) &&
+                  addresses.map((address) => (
+                    <option key={address.id} value={address.id}>
+                      {address.name}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -121,11 +121,12 @@ const CreateSeminar = () => {
                 onChange={(e) => setSelectedCourse(e.target.value)}
               >
                 <option value="">Select Course</option>
-                {courses.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.name}
-                  </option>
-                ))}
+                {Array.isArray(courses) &&
+                  courses.map((course) => (
+                    <option key={course.id} value={course.id}>
+                      {course.name}
+                    </option>
+                  ))}
               </select>
             </div>
 

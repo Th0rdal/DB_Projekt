@@ -11,7 +11,7 @@ import { isAuthenticated } from "./auth";
 import Login from "./pages/Login.jsx";
 import Registration from "./pages/Registration.jsx";
 import CreateCourse from "./pages/CreateCourse.jsx";
-import CreateAddresses from "./pages/CreateAddresses.jsx";
+import CreateAddress from "./pages/CreateAddress.jsx";
 import CreateSeminar from "./pages/CreateSeminar.jsx";
 
 function App() {
@@ -43,7 +43,7 @@ function App() {
         />
         <Route
           path="/create_address"
-          element={isAuthenticated() ? <CreateAddresses /> : <Navigate to="/" />}
+          element={isAuthenticated() ? <CreateAddress /> : <Navigate to="/" />}
         />
         <Route
           path="/create_seminar"

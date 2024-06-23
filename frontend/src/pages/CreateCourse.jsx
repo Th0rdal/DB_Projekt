@@ -5,20 +5,31 @@ const CreateCourse = () => {
   const [courseName, setCourseName] = useState("");
   const [orgcount, setOrgCount] = useState("");
   const [prepTime, setPrepTime] = useState("");
+  const [pdfFile, setPdfFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setPdfFile(event.target.files[0]);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!courseName || !orgcount || !prepTime) {
+    if (!courseName || !orgcount || !prepTime || !pdfFile) {
       alert("All fields required");
       return;
     }
 
+    const formData = new FormData();
+    formData.append("courseName", courseName);
+    formData.append("orgcount", orgcount);
+    formData.append("prepTime", prepTime);
+    formData.append("pdfFile", pdfFile);
+
     try {
-      const response = await axios.post("YOUR_API_ENDPOINT", {
-        courseName,
-        orgcount,
-        prepTime,
+      const response = await axios.post("api/create_course", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       console.log(response.data);
       // handle success (e.g., show a success message or redirect)
@@ -75,7 +86,7 @@ const CreateCourse = () => {
 
             <div className="mb-3">
               <label htmlFor="prepTime" className="form-label">
-                Preparation Time
+                Preparation Time (hours)
               </label>
               <input
                 type="number"
@@ -85,6 +96,21 @@ const CreateCourse = () => {
                 style={{ width: "60%", margin: "0 auto" }}
                 value={prepTime}
                 onChange={(e) => setPrepTime(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="pdfFile" className="form-label">
+                Upload PDF
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                id="pdfFile"
+                required
+                style={{ width: "60%", margin: "0 auto" }}
+                accept=".pdf"
+                onChange={handleFileChange}
               />
             </div>
 
