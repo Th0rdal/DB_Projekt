@@ -3,9 +3,14 @@ const path = require("path");
 const fs = require("fs");
 
 const dbPath = path.resolve(__dirname, '../resources/db/database.db');
+const dbFolderPath = path.resolve(__dirname, '../resources/db');
+
+if (!fs.existsSync(dbFolderPath)) {
+  fs.mkdirSync(dbFolderPath, { recursive: true });
+}
 fs.unlink(dbPath, (err) => {
     if (err) {
-        console.error('Error:', err);
+        console.log('No old db found:');
         return;
     }
     console.log('old Database file deleted');
