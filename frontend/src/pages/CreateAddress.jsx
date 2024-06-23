@@ -26,18 +26,17 @@ const CreateAddress = () => {
     axios
       .post(
         "api/create_address",
-        {
-          addressFormValues,
-        },
+
+        addressFormValues,
+
         {
           withCredentials: true,
         }
       )
       .then((res) => {
-        if (res.status(200)){
-          alert("Address sucessfully created!")
+        if (res.status(200)) {
+          alert("Address sucessfully created!");
         }
-        
       })
       .catch((err) => {
         alert("Fill in all required fields!");

@@ -41,7 +41,7 @@ const Registration = () => {
 
   const registerButtonclicked = (e) => {
     e.preventDefault();
-    let registerFormValues = {
+    const registerFormValues = {
       firstName,
       lastName,
       SVNR,
@@ -59,23 +59,16 @@ const Registration = () => {
     console.log(JSON.stringify(registerFormValues));
 
     axios
-      .post(
-        "api/register",
-        {
-          registerFormValues,
-        },
-        {
-          withCredentials: true,
-        }
-      )
+      .post("api/register", registerFormValues, {
+        withCredentials: true,
+      })
       .then((res) => {
-        // Assuming the backend returns an identification token
         const { identification } = res.data;
-        // Store identification token in localStorage
-        localStorage.setItem("sessionId", identification);
+        document.cookie = `identification=${identification}`;
         navigate("/");
       })
       .catch((err) => {
+        console.log(err);
         alert("Fill in all required fields!");
       });
   };
