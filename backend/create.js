@@ -6,6 +6,7 @@ const db = require("../database/db");
 const multer = require("multer");
 
 const { checkIdentification } = require("./session");
+const { json } = require("body-parser");
 //const { generateUniqueScriptNr } = require('./utils');
 
 // TODO uplaod directory for pdf files
@@ -126,8 +127,6 @@ router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
   }
 });
 
-
-
 // ++++++++++++++++++++++++++++ CREATE ADDRESSES +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 const insertAddress = async (city, ZIP, street, streetNr) => {
@@ -236,6 +235,8 @@ router.post("/create_seminar", async (req, res) => {
   const { addressID, date, time, course } = req.body;
   const identification = req.cookies.identification;
 
+  console.log(JSON.stringify(req.body));
+  
   if (!identification) {
     return res.status(400).json({ error: "Identification cookie is missing" });
   }

@@ -9,12 +9,25 @@ const CreateSeminar = () => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
+  const dummyAddress = [
+    { address: "adresse 1" },
+    { address: "adresse 2" },
+    { address: "adresse 3" },
+  ];
+  const dummyCourseName = [
+    { courseName: "courseName 1" },
+    { courseName: "courseName 2" },
+    { courseName: "courseName 3" },
+  ];
+
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const response = await axios.get("api/get_addresses");
-        setAddresses(response.data || []);
-        if (response.data.length === 0) {
+        // const response = await axios.get("api/get_addresses");
+        // setAddresses(response.data || []);
+        setAddresses(dummyAddress);
+        // if (response.data.length === 0) {
+        if (dummyAddress.length === 0) {
           alert("No addresses found. Please create one first.");
         }
       } catch (error) {
@@ -24,8 +37,9 @@ const CreateSeminar = () => {
 
     const fetchCourses = async () => {
       try {
-        const response = await axios.get("api/get_courses");
-        setCourses(response.data || []);
+        // const response = await axios.get("api/get_courses");
+        // setCourses(response.data || []);
+        setCourses(dummyCourseName);
       } catch (error) {
         console.error("Error fetching courses", error);
       }
@@ -54,18 +68,27 @@ const CreateSeminar = () => {
     try {
       const formattedDate = formatDate(date);
       const sessionId = localStorage.getItem("sessionId");
-      const svnrResponse = await axios.get(`api/get_svnr?sessionId=${sessionId}`);
-      const svnr = svnrResponse.data.svnr;
 
-      const response = await axios.post("api/create_seminar", {
-        address: selectedAddress,
-        courseName: selectedCourse,
-        date: formattedDate,
-        time,
-        svnr,
-      });
-      console.log(response.data);
-      alert("Form submitted successfully!");
+      // const svnrResponse = await axios.get(
+      //   `api/get_svnr?sessionId=${sessionId}`
+      // );
+      // const svnr = svnrResponse.data.svnr;
+
+      await axios
+        .post("api/create_seminar", {
+          addressID: selectedAddress,
+          course: selectedCourse,
+          date: formattedDate,
+          time,
+          // svnr,
+        })
+        .then((res) => {
+          console.log(res.data);
+          alert("Form submitted successfully!");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } catch (error) {
       console.error(error);
     }
@@ -100,9 +123,9 @@ const CreateSeminar = () => {
               >
                 <option value="">Select Address</option>
                 {Array.isArray(addresses) &&
-                  addresses.map((address) => (
-                    <option key={address.id} value={address.id}>
-                      {address.name}
+                  addresses.map((address, index) => (
+                    <option key={index} value={address.address}>
+                      {address.address}
                     </option>
                   ))}
               </select>
@@ -122,9 +145,9 @@ const CreateSeminar = () => {
               >
                 <option value="">Select Course</option>
                 {Array.isArray(courses) &&
-                  courses.map((course) => (
-                    <option key={course.id} value={course.id}>
-                      {course.name}
+                  courses.map((course, index) => (
+                    <option key={index} value={course.courseName}>
+                      {course.courseName}
                     </option>
                   ))}
               </select>
