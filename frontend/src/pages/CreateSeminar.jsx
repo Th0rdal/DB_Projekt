@@ -1,47 +1,61 @@
 import React, { useState, useEffect } from "react";
-// import axios from "axios";
+import axios from "axios";
 
 const CreateSeminar = () => {
-  const [addresses, setAddresses] = useState([
-    // Temporäre Testdaten
-    { id: 1, name: "Address 1" },
-    { id: 2, name: "Address 2" },
-  ]);
-  const [courses, setCourses] = useState([
-    // Temporäre Testdaten
-    { id: 1, name: "Course 1" },
-    { id: 2, name: "Course 2" },
-  ]);
+  const [addresses, setAddresses] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
-  // useEffect(() => {
-  //   const fetchAddresses = async () => {
-  //     try {
-  //       const response = await axios.get("/get_addresses");
-  //       setAddresses(response.data);
-  //       if (response.data.length === 0) {
-  //         alert("No addresses found. Please create one first.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching addresses", error);
-  //     }
-  //   };
+  const dummyAddress = [
+    { address: "adresse 1" },
+    { address: "adresse 2" },
+    { address: "adresse 3" },
+  ];
+  const dummyCourseName = [
+    { courseName: "courseName 1" },
+    { courseName: "courseName 2" },
+    { courseName: "courseName 3" },
+  ];
 
-  //   const fetchCourses = async () => {
-  //     try {
-  //       const response = await axios.get("/get_courses");
-  //       setCourses(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching courses", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        // const response = await axios.get("api/get_addresses");
+        // setAddresses(response.data || []);
+        setAddresses(dummyAddress);
+        // if (response.data.length === 0) {
+        if (dummyAddress.length === 0) {
+          alert("No addresses found. Please create one first.");
+        }
+      } catch (error) {
+        console.error("Error fetching addresses", error);
+      }
+    };
 
-  //   fetchAddresses();
-  //   fetchCourses();
-  // }, []);
+    const fetchCourses = async () => {
+      try {
+        // const response = await axios.get("api/get_courses");
+        // setCourses(response.data || []);
+        setCourses(dummyCourseName);
+      } catch (error) {
+        console.error("Error fetching courses", error);
+      }
+    };
+
+    fetchAddresses();
+    fetchCourses();
+  }, []);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -52,23 +66,31 @@ const CreateSeminar = () => {
     }
 
     try {
-      // const sessionId = localStorage.getItem("sessionId");
-      // const svnrResponse = await axios.get(`/get_svnr?sessionId=${sessionId}`);
+      const formattedDate = formatDate(date);
+      const sessionId = localStorage.getItem("sessionId");
+
+      // const svnrResponse = await axios.get(
+      //   `api/get_svnr?sessionId=${sessionId}`
+      // );
       // const svnr = svnrResponse.data.svnr;
 
-      // const response = await axios.post("/create_seminar", {
-      //   address: selectedAddress,
-      //   courseName: selectedCourse,
-      //   date,
-      //   time,
-      //   svnr,
-      // });
-      // console.log(response.data);
-      // handle success (e.g., show a success message or redirect)
-      alert("Form submitted successfully!");
+      await axios
+        .post("api/create_seminar", {
+          addressID: selectedAddress,
+          course: selectedCourse,
+          date: formattedDate,
+          time,
+          // svnr,
+        })
+        .then((res) => {
+          console.log(res.data);
+          alert("Form submitted successfully!");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } catch (error) {
       console.error(error);
-      // handle error (e.g., show an error message)
     }
   };
 
@@ -100,11 +122,12 @@ const CreateSeminar = () => {
                 onChange={(e) => setSelectedAddress(e.target.value)}
               >
                 <option value="">Select Address</option>
-                {addresses.map((address) => (
-                  <option key={address.id} value={address.id}>
-                    {address.name}
-                  </option>
-                ))}
+                {Array.isArray(addresses) &&
+                  addresses.map((address, index) => (
+                    <option key={index} value={address.address}>
+                      {address.address}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -121,11 +144,12 @@ const CreateSeminar = () => {
                 onChange={(e) => setSelectedCourse(e.target.value)}
               >
                 <option value="">Select Course</option>
-                {courses.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.name}
-                  </option>
-                ))}
+                {Array.isArray(courses) &&
+                  courses.map((course, index) => (
+                    <option key={index} value={course.courseName}>
+                      {course.courseName}
+                    </option>
+                  ))}
               </select>
             </div>
 

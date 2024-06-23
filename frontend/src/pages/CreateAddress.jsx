@@ -1,33 +1,46 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const CreateAddresses = () => {
+const CreateAddress = () => {
   const [city, setCity] = useState("");
-  const [zipCode, setZipCode] = useState("");
+  const [ZIP, setZIP] = useState("");
   const [street, setStreet] = useState("");
   const [streetNr, setStreetNr] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const addressFormValues = {
+      city,
+      ZIP,
+      street,
+      streetNr,
+    };
 
-    if (!city || !zipCode || !street || !streetNr) {
+    console.log(JSON.stringify(addressFormValues));
+
+    if (!city || !ZIP || !street || !streetNr) {
       alert("All fields required");
       return;
     }
 
-    try {
-      const response = await axios.post("YOUR_API_ENDPOINT", {
-        city,
-        zipCode,
-        street,
-        streetNr,
+    axios
+      .post(
+        "api/create_address",
+
+        addressFormValues,
+
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        if (res.status(200)) {
+          alert("Address sucessfully created!");
+        }
+      })
+      .catch((err) => {
+        alert("Fill in all required fields!");
       });
-      console.log(response.data);
-      // handle success (e.g., show a success message or redirect)
-    } catch (error) {
-      console.error(error);
-      // handle error (e.g., show an error message)
-    }
   };
 
   return (
@@ -65,13 +78,18 @@ const CreateAddresses = () => {
                 Zip Code
               </label>
               <input
-                type="text"
+                type="number"
+                maxLength="4"
                 className="form-control"
                 id="zipCode"
-                required
                 style={{ width: "60%", margin: "0 auto" }}
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
+                value={ZIP}
+                onChange={(e) => {
+                  if (e.target.value.length <= 4) {
+                    setZIP(e.target.value);
+                  }
+                }}
+                required
               />
             </div>
 
@@ -124,4 +142,4 @@ const CreateAddresses = () => {
   );
 };
 
-export default CreateAddresses;
+export default CreateAddress;

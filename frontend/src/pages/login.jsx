@@ -73,7 +73,6 @@ const Login = () => {
                 id="svnr"
                 aria-describedby="emailHelp"
                 required
-                placeholder="johndoe@doemail.com"
                 value={svnr}
                 onChange={(e) => setSvnr(e.target.value)}
               />

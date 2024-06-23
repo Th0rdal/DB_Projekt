@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -7,44 +7,72 @@ const Registration = () => {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [SVNR, setSvnr] = useState("");
   const [phoneNr1, setPhoneNr1] = useState("");
   const [phoneNr2, setPhoneNr2] = useState("");
   const [street, setStreet] = useState("");
   const [streetNr, setStreetNr] = useState("");
-  const [zipCode, setZipCode] = useState("");
+  const [ZIP, setZipCode] = useState("");
   const [city, setCity] = useState("");
   const [accountNr, setAccountNr] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [blz, setBlz] = useState("");
+  const [BLZ, setBlz] = useState("");
+  const [accountBalance, setAccountBalance] = useState(""); // Added accountBalance state
+  const [blzList, setBlzList] = useState([]); // State to store BLZ list
+
+  useEffect(() => {
+    const fetchBLZ = async () => {
+      try {
+        const dummyData = [
+          { BLZ: "10000" },
+          { BLZ: "20000" },
+          { BLZ: "30000" },
+        ];
+        // setBlzList(dummyData);
+        // TODO checken ob enpoint gibt blz weil backend muss uns beim laden der page über get entpoint blz litse liefern und dann automatish über die blz im backend den bankname setzen
+        console.log("test");
+        const response = await axios.get("api/get_BLZ");
+        console.log("get enptoint blz");
+        console.log(JSON.stringify(response.data));
+        setBlzList(response.data);
+        // setBlzList(response.data);
+      } catch (error) {
+        console.error("Error fetching BLZ list", error);
+      }
+    };
+
+    fetchBLZ();
+  }, []);
 
   const registerButtonclicked = (e) => {
     e.preventDefault();
+    const registerFormValues = {
+      firstName,
+      lastName,
+      SVNR,
+      phoneNr1,
+      phoneNr2,
+      street,
+      streetNr,
+      ZIP,
+      city,
+      accountNr,
+      BLZ,
+      accountBalance,
+    };
+
+    console.log(JSON.stringify(registerFormValues));
 
     axios
-      .post(
-        "http://localhost:3000/register",
-        {
-          firstName,
-          lastName,
-          phoneNr1,
-          phoneNr2,
-          street,
-          streetNr,
-          zipCode,
-          city,
-          accountNr,
-          bankName,
-          blz,
-        },
-        {
-          withCredentials: true,
-        }
-      )
+      .post("api/register", registerFormValues, {
+        withCredentials: true,
+      })
       .then((res) => {
-        //console.log(res)
+        // const { identification } = res.data;
+        // document.cookie = `identification=${identification}`;
         navigate("/");
       })
       .catch((err) => {
+        console.log(err);
         alert("Fill in all required fields!");
       });
   };
@@ -54,7 +82,7 @@ const Registration = () => {
       <div
         style={{
           display: "flex",
-          height: "195vh",
+          height: "210vh",
           alignContent: "center",
           justifyContent: "center",
         }}
@@ -96,6 +124,24 @@ const Registration = () => {
                 id="lastName"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="mb-1">
+              <label htmlFor="SVNR" className="form-label">
+                SVNR
+              </label>
+              <input
+                type="number"
+                maxLength="10"
+                className="form-control"
+                id="SVNR"
+                value={SVNR}
+                onChange={(e) => {
+                  if (e.target.value.length <= 10) {
+                    setSvnr(e.target.value);
+                  }
+                }}
                 required
               />
             </div>
@@ -142,7 +188,7 @@ const Registration = () => {
                 Street Nr.
               </label>
               <input
-                type="number"
+                type="text"
                 className="form-control"
                 id="streetNr"
                 value={streetNr}
@@ -151,15 +197,20 @@ const Registration = () => {
               />
             </div>
             <div className="mb-1">
-              <label htmlFor="zipCode" className="form-label">
+              <label htmlFor="ZIP" className="form-label">
                 ZIP Code
               </label>
               <input
                 type="number"
+                maxLength="4"
                 className="form-control"
-                id="zipCode"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
+                id="ZIP"
+                value={ZIP}
+                onChange={(e) => {
+                  if (e.target.value.length <= 4) {
+                    setZipCode(e.target.value);
+                  }
+                }}
                 required
               />
             </div>
@@ -190,41 +241,42 @@ const Registration = () => {
               />
             </div>
             <div className="mb-1">
-              <label htmlFor="bankName" className="form-label">
-                Bank name
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="bankName"
-                value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-1">
-              <label htmlFor="blz" className="form-label">
+              <label htmlFor="BLZ" className="form-label">
                 BLZ
               </label>
               <div className="input-group mb-1">
                 <select
                   className="custom-select"
                   id="inputGroupSelect02"
-                  value={blz}
+                  value={BLZ}
                   onChange={(e) => setBlz(e.target.value)}
                   required
                 >
                   <option value="" disabled>
                     Choose...
                   </option>
-                  <option value="14000">14000 - Bawag PSK</option>
-                  <option value="12000">12000 - UniCredit Bank Austria</option>
-                  <option value="20111">20111 - Erste Bank</option>
+                  {blzList.map((blz, index) => (
+                    <option key={index} value={blz.blz}>
+                      - {blz.blz}
+                    </option>
+                  ))}
                 </select>
                 <div className="input-group-append"></div>
               </div>
             </div>
-
+            <div className="mb-1">
+              <label htmlFor="accountBalance" className="form-label">
+                Account Balance (€)
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="accountBalance"
+                value={accountBalance}
+                onChange={(e) => setAccountBalance(e.target.value)}
+                required
+              />
+            </div>
             <div
               style={{
                 display: "flex",

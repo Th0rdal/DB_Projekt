@@ -1,26 +1,45 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { formToJSON } from "axios";
 
 const CreateCourse = () => {
   const [courseName, setCourseName] = useState("");
-  const [orgcount, setOrgCount] = useState("");
+  const [orgCount, setOrgCount] = useState("");
   const [prepTime, setPrepTime] = useState("");
+  const [pdfFile, setPdfFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setPdfFile(event.target.files[0]);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!courseName || !orgcount || !prepTime) {
+    if (!courseName || !orgCount || !prepTime || !pdfFile) {
       alert("All fields required");
       return;
     }
 
+    const formData = new FormData();
+    formData.append("courseName", courseName);
+    formData.append("orgCount", orgCount);
+    formData.append("prepTime", prepTime);
+    formData.append("pdfFile", pdfFile);
+
+    console.log(formToJSON(formData));
+
     try {
-      const response = await axios.post("YOUR_API_ENDPOINT", {
-        courseName,
-        orgcount,
-        prepTime,
-      });
-      console.log(response.data);
+      await axios
+        .post("api/create_course", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       // handle success (e.g., show a success message or redirect)
     } catch (error) {
       console.error(error);
@@ -60,7 +79,7 @@ const CreateCourse = () => {
 
             <div className="mb-3">
               <label htmlFor="orgcount" className="form-label">
-                Organization Count
+                Number of Organizers
               </label>
               <input
                 type="number"
@@ -68,14 +87,14 @@ const CreateCourse = () => {
                 id="orgcount"
                 required
                 style={{ width: "60%", margin: "0 auto" }}
-                value={orgcount}
+                value={orgCount}
                 onChange={(e) => setOrgCount(e.target.value)}
               />
             </div>
 
             <div className="mb-3">
               <label htmlFor="prepTime" className="form-label">
-                Preparation Time
+                Preparation Time (hours)
               </label>
               <input
                 type="number"
@@ -85,6 +104,21 @@ const CreateCourse = () => {
                 style={{ width: "60%", margin: "0 auto" }}
                 value={prepTime}
                 onChange={(e) => setPrepTime(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="pdfFile" className="form-label">
+                Upload PDF
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                id="pdfFile"
+                required
+                style={{ width: "60%", margin: "0 auto" }}
+                accept=".pdf"
+                onChange={handleFileChange}
               />
             </div>
 
