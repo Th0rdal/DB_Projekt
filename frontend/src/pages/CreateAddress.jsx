@@ -8,7 +8,7 @@ const CreateAddress = () => {
   const [streetNr, setStreetNr] = useState("");
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+  //  event.preventDefault();
     const addressFormValues = {
       city,
       ZIP,

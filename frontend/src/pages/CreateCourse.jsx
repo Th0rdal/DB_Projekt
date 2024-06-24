@@ -12,7 +12,7 @@ const CreateCourse = () => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+   // event.preventDefault();
 
     if (!courseName || !orgCount || !prepTime || !pdfFile) {
       alert("All fields required");

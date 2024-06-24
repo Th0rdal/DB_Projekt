@@ -20,34 +20,39 @@ const CreateSeminar = () => {
     { courseName: "courseName 3" },
   ]; */
 
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-         const response = await axios.get("api/get_addresses");
-        setAddresses(response.data || []);
-       // setAddresses(dummyAddress);
-        // if (response.data.length === 0) {
-        //if (dummyAddress.length === 0) {
-          alert("No addresses found. Please create one first.");
-        }
-      } catch (error) {
-        console.error("Error fetching addresses", error);
-      }
-    };
+useEffect(() => {
+  const fetchAddresses = async () => {
+    try {
+      const response = await axios.get("api/get_addresses");
+      console.log(response);
+      setAddresses(response.data || []);
 
-    const fetchCourses = async () => {
-      try {
-        // const response = await axios.get("api/get_courses");
-        // setCourses(response.data || []);
-        setCourses(dummyCourseName);
-      } catch (error) {
-        console.error("Error fetching courses", error);
+      if (response.data.length === 0) {
+        alert("No addresses found. Please create one first.");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching addresses", error);
+    }
+  };
 
-    fetchAddresses();
-    fetchCourses();
-  }, []);
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get("api/get_courses");
+      console.log(response);
+      setCourses(response.data || []);
+
+      if (response.data.length === 0) {
+        alert("No courses found. Please create one first.");
+      }
+    } catch (error) {
+      console.error("Error fetching courses", error);
+    }
+  };
+
+  fetchAddresses();
+  fetchCourses();
+}, []);
+
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
