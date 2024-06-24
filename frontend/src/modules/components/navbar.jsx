@@ -27,9 +27,15 @@ function Navbar() {
   const token = Cookies.get("token");
 
   const logout = async (e) => {
-    Cookies.remove("identification", { path: "/" });
-    setUsername("");
-    navigate("/");
+    e.preventDefault();
+
+    try {
+      await axios.post("api/logout", {withCredentials: true});
+      setUsername("");
+      navigate("/");
+    } catch (err) {
+      console.error("Error during logout", err);
+    }
   };
 
   useEffect(() => {
