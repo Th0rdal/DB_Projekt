@@ -9,92 +9,75 @@ const CreateSeminar = () => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
- /*  const dummyAddress = [
-    { address: "adresse 1" },
-    { address: "adresse 2" },
-    { address: "adresse 3" },
-  ];
-  const dummyCourseName = [
-    { courseName: "courseName 1" },
-    { courseName: "courseName 2" },
-    { courseName: "courseName 3" },
-  ]; */
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const response = await axios.get("api/get_addresses");
+        console.log(response);
+        setAddresses(response.data || []);
 
-useEffect(() => {
-  const fetchAddresses = async () => {
-    try {
-      const response = await axios.get("api/get_addresses");
-      console.log(response);
-      setAddresses(response.data || []);
-
-      if (response.data.length === 0) {
-        alert("No addresses found. Please create one first.");
+        if (response.data.length === 0) {
+          alert("No addresses found. Please create one first.");
+        }
+      } catch (error) {
+        console.error("Error fetching addresses", error);
       }
-    } catch (error) {
-      console.error("Error fetching addresses", error);
-    }
-  };
+    };
 
-  const fetchCourses = async () => {
-    try {
-      const response = await axios.get("api/get_courses");
-      console.log(response);
-      setCourses(response.data || []);
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get("api/get_courses");
+        console.log(response);
+        setCourses(response.data || []);
 
-      if (response.data.length === 0) {
-        alert("No courses found. Please create one first.");
+        if (response.data.length === 0) {
+          alert("No courses found. Please create one first.");
+        }
+      } catch (error) {
+        console.error("Error fetching courses", error);
       }
-    } catch (error) {
-      console.error("Error fetching courses", error);
-    }
-  };
+    };
 
-  fetchAddresses();
-  fetchCourses();
-}, []);
-
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+    fetchAddresses();
+    fetchCourses();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     if (!selectedAddress || !selectedCourse || !date || !time) {
       alert("All fields required");
       return;
     }
-
+    console.log(date);
+    console.log(time);
     try {
-      const formattedDate = formatDate(date);
-      const sessionId = localStorage.getItem("sessionId");
-
-      // const svnrResponse = await axios.get(
-      //   `api/get_svnr?sessionId=${sessionId}`
-      // );
-      // const svnr = svnrResponse.data.svnr;
-
       await axios
-        .post("api/create_seminar", {
-          addressID: selectedAddress,
-          course: selectedCourse,
-          date: formattedDate,
-          time,
-          // svnr,
-        })
+        .post(
+          "api/create_seminar",
+          {
+            addressID: selectedAddress,
+            courseName: selectedCourse,
+            date,
+            time,
+          },
+          {
+            withCredentials: true,
+          }
+        )
         .then((res) => {
+          if (res.status == 200) {
+            alert("Form submitted successfully!");
+          }
           console.log(res.data);
-          alert("Form submitted successfully!");
         })
         .catch((error) => {
+          console.log("test");
           console.log(error);
+          alert("Create Seminar went wrong! - check input");
         });
     } catch (error) {
+      console.log("catch 2");
+      alert("login first");
       console.error(error);
     }
   };
@@ -129,8 +112,9 @@ useEffect(() => {
                 <option value="">Select Address</option>
                 {Array.isArray(addresses) &&
                   addresses.map((address, index) => (
-                    <option key={index} value={address.address}>
-                      {address.address}
+                    <option key={index} value={address.addressID}>
+                      {address.street} {address.streetNR}, {address.ZIP}{" "}
+                      {address.city}
                     </option>
                   ))}
               </select>

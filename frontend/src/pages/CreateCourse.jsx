@@ -12,7 +12,7 @@ const CreateCourse = () => {
   };
 
   const handleSubmit = async (event) => {
-   // event.preventDefault();
+    event.preventDefault();
 
     if (!courseName || !orgCount || !prepTime || !pdfFile) {
       alert("All fields required");
@@ -37,8 +37,8 @@ const CreateCourse = () => {
         })
         .then((res) => {
           console.log("res im fe");
-          if(res.status == 200){
-          console.log("Course created successfully");
+          if (res.status == 200) {
+            console.log("Course created successfully");
           } else {
             console.log("Unexpected seponse status:", res.status);
           }
