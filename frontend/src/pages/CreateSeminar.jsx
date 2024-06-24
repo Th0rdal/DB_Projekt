@@ -9,7 +9,7 @@ const CreateSeminar = () => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
-  const dummyAddress = [
+ /*  const dummyAddress = [
     { address: "adresse 1" },
     { address: "adresse 2" },
     { address: "adresse 3" },
@@ -18,7 +18,7 @@ const CreateSeminar = () => {
     { courseName: "courseName 1" },
     { courseName: "courseName 2" },
     { courseName: "courseName 3" },
-  ];
+  ]; */
 
   useEffect(() => {
     const fetchAddresses = async () => {

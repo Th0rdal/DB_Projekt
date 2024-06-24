@@ -33,9 +33,15 @@ const CreateCourse = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         })
         .then((res) => {
-          console.log(res.data);
+          console.log(res);
+          if(res.status == 200){
+          console.log("Course created successfully");
+          } else {
+            console.log("Unexpected seponse status:", res.status);
+          }
         })
         .catch((error) => {
           console.log(error);

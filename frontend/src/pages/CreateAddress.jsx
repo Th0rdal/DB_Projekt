@@ -23,7 +23,7 @@ const CreateAddress = () => {
       return;
     }
 
-    axios
+    await axios
       .post(
         "api/create_address",
 
@@ -34,12 +34,13 @@ const CreateAddress = () => {
         }
       )
       .then((res) => {
-        if (res.status(200)) {
+        if (res.status == 200) {
           alert("Address sucessfully created!");
         }
       })
       .catch((err) => {
-        alert("Fill in all required fields!");
+        console.log(err);
+        alert("test error creat!");
       });
   };
 

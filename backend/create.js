@@ -2,11 +2,11 @@
 
 const express = require("express");
 const router = express.Router();
-const DBAbstraction = require('../database/db');
+const DBAbstraction = require("../database/db");
 const multer = require("multer");
-const path = require('path');
-const uuid = require('uuid');
-const fs = require('fs').promises;
+const path = require("path");
+const uuid = require("uuid");
+const fs = require("fs").promises;
 
 const { checkIdentification } = require("./session");
 const { json } = require("body-parser");
@@ -17,16 +17,13 @@ const upload = multer({ dest: "uploads/" }); // Specify your upload directory
 
 // ++++++++++++++++++++++++++++ CREATE COURSES + SCRIPTTYPE +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 const checkCourseName = async (courseName) => {
-    try{
-      const query = "SELECT CourseName FROM Course WHERE CourseName = ?";
-      const row = await DBAbstraction.get(query, courseName);
-      return row;
-
-    }
-    catch (err){
-      throw err;
-    }
-
+  try {
+    const query = "SELECT CourseName FROM Course WHERE CourseName = ?";
+    const row = await DBAbstraction.get(query, courseName);
+    return row;
+  } catch (err) {
+    throw err;
+  }
 };
 
 const insertCourse = async (courseName, pdfName, orgCount, prepTime) => {
@@ -37,10 +34,14 @@ const insertCourse = async (courseName, pdfName, orgCount, prepTime) => {
 
   try {
     const query = `INSERT INTO Course (CourseName, scriptType, OrgCount, PrepTime) VALUES (?, ?, ?, ?)`;
-    const row = DBAbstraction.run(query, [courseName, pdfName, orgCount, prepTime]);
+    const row = DBAbstraction.run(query, [
+      courseName,
+      pdfName,
+      orgCount,
+      prepTime,
+    ]);
     return row;
-  }
-  catch (err){
+  } catch (err) {
     throw err;
   }
 };
@@ -55,7 +56,6 @@ const insertScriptType = async (pdf, author) => {
   }
 };
 
-
 const getSVNRbyIdentification = async (identification) => {
   try {
     const query = `SELECT SVNR FROM Instructor WHERE Identification = ?`;
@@ -65,7 +65,6 @@ const getSVNRbyIdentification = async (identification) => {
     throw err;
   }
 };
-
 
 const getNameBySVNR = async (SVNR) => {
   try {
@@ -82,7 +81,7 @@ router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
   const identification = req.cookies.identification;
   const pdfFile = req.file;
 
-  console.log(identification)
+  console.log(identification);
 
   if (!pdfFile) {
     return res.status(400).send("No PDF file uploaded.");
@@ -102,8 +101,8 @@ router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
       });
     }
 
-    const newFileName = uuid.v4() + '.pdf';
-    const newPath = path.join(__dirname, '..', 'uploads', newFileName);
+    const newFileName = uuid.v4() + ".pdf";
+    const newPath = path.join(__dirname, "..", "uploads", newFileName);
     await fs.rename(pdfFile.path, newPath);
 
     const svnrRow = await getSVNRbyIdentification(identification);
@@ -112,7 +111,7 @@ router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
     }
 
     const { SVNR } = svnrRow;
-    console.log(SVNR)
+    console.log(SVNR);
     const nameRow = await getNameBySVNR(SVNR);
     if (!nameRow) {
       return res.status(404).send("Name not found.");
@@ -163,7 +162,9 @@ router.post("/create_address", async (req, res) => {
     await insertAddress(city, ZIP, street, streetNr);
 
     res.status(200).json({ message: "created address successfully!" });
+    console.log("juhu");
   } catch (err) {
+    console.log("test");
     res.status(500).json({ error: err.message });
   }
 });
@@ -179,7 +180,6 @@ const getAllCourses = async () => {
     throw err;
   }
 };
-
 
 router.get("/get_courses", async (req, res) => {
   const identification = req.cookies.identification;
@@ -213,7 +213,6 @@ const getAllAddresses = async () => {
   }
 };
 
-
 router.get("/get_addresses", async (req, res) => {
   const identification = req.cookies.identification;
   if (!identification) {
@@ -240,7 +239,13 @@ router.get("/get_addresses", async (req, res) => {
 const insertSeminar = async (addressID, courseName, instructor, date, time) => {
   try {
     const query = `INSERT INTO Seminar (AddressID, courseName, instructor, date, time) VALUES (?, ?, ?, ?, ?)`;
-    const row = await DBAbstraction.run(query, [addressID, courseName, instructor, date, time]);
+    const row = await DBAbstraction.run(query, [
+      addressID,
+      courseName,
+      instructor,
+      date,
+      time,
+    ]);
     return row;
   } catch (err) {
     throw err;
@@ -274,10 +279,19 @@ router.post("/create_seminar", async (req, res) => {
       return res.status(400).json({ error: "Course does not exist" });
     }
 
-    const formattedDate = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD
-    const formattedTime = new Date(`1970-01-01T${time}Z`).toISOString().split('T')[1].split('.')[0]; // HH:MM:SS
+    const formattedDate = new Date(date).toISOString().split("T")[0]; // YYYY-MM-DD
+    const formattedTime = new Date(`1970-01-01T${time}Z`)
+      .toISOString()
+      .split("T")[1]
+      .split(".")[0]; // HH:MM:SS
 
-    await insertSeminar(addressID, courseName, identification, formattedDate, formattedTime);
+    await insertSeminar(
+      addressID,
+      courseName,
+      identification,
+      formattedDate,
+      formattedTime
+    );
 
     res.status(200).json({ message: "created seminar successfully!" });
   } catch (err) {
