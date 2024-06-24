@@ -23,11 +23,11 @@ const CreateSeminar = () => {
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        // const response = await axios.get("api/get_addresses");
-        // setAddresses(response.data || []);
-        setAddresses(dummyAddress);
+         const response = await axios.get("api/get_addresses");
+        setAddresses(response.data || []);
+       // setAddresses(dummyAddress);
         // if (response.data.length === 0) {
-        if (dummyAddress.length === 0) {
+        //if (dummyAddress.length === 0) {
           alert("No addresses found. Please create one first.");
         }
       } catch (error) {

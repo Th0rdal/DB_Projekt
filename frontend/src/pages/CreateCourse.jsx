@@ -36,7 +36,7 @@ const CreateCourse = () => {
           withCredentials: true,
         })
         .then((res) => {
-          console.log(res);
+          console.log("res im fe");
           if(res.status == 200){
           console.log("Course created successfully");
           } else {
