@@ -1,15 +1,13 @@
-const db = require('../database/db');
-const checkIdentification = (identification) => {
-    return new Promise((resolve, reject) => {
+const DBAbstraction = require('../database/db');
+const checkIdentification = async (identification) => {
+    try {
         const query = 'SELECT * FROM Instructor WHERE identification = ?';
-        db.get(query, [identification], (err, row) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(row);
-            }
-        });
-    });
+        const row = await DBAbstraction.get(query, [identification]);
+        return row;
+    }
+    catch (err){
+        throw err;
+    }
 };
 
 module.exports = {

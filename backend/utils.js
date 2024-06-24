@@ -34,6 +34,23 @@ async function generateUniqueEmployeeNr() {
     }
 }
 
+async function generateUniquePDFNumber() {
+    const PDFNR = Math.floor(1000000000 + Math.random() * 9000000000).toString(); // 10-stellige Zahl
+
+    const checkUniquePDFNumber = 'SELECT number FROM scripttype WHERE number = ?';
+
+    try {
+        const row = await DBAbstraction.get(checkUniquePDFNumber, [PDFNR]);
+        if (row) {
+            return await generateUniquePDFNumber();
+        } else {
+            return PDFNR;
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
 const formatDate = (date) => {
     const padTo2Digits = (num) => num.toString().padStart(2, '0');
 

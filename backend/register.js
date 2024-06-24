@@ -19,11 +19,7 @@ const checkBLZ = async (BLZ) => {
   const query = "SELECT BankName FROM BankName WHERE BLZ = ?";
   try {
     const row = await DBAbstraction.get(query, [BLZ]);
-    if (row) {
-      return row;
-    } else {
-      throw new Error("No data found checkBLZ");
-    }
+    return row;
   } catch (err) {
     throw err;
   }

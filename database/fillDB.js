@@ -77,8 +77,8 @@ const createLanguageTable = `
 `
 
 const createScripttypeTable = `
-    CREATE TABLE IF NOT EXISTS scripttype(
-        number INTEGER PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS scriptType(
+        number TEXT PRIMARY KEY,
         author TEXT NOT NULL
     )
 `
@@ -86,7 +86,7 @@ const createScripttypeTable = `
 const createCourseTable = `
     CREATE TABLE IF NOT EXISTS course(
         courseName TEXT PRIMATE KEY,
-        scriptType INTEGER,
+        scriptType TEXT,
         orgCount TINYINT,
         prepTime TIME,
         FOREIGN KEY (scriptType) REFERENCES scriptType(number)
