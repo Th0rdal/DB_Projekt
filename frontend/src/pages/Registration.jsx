@@ -16,17 +16,17 @@ const Registration = () => {
   const [city, setCity] = useState("");
   const [accountNr, setAccountNr] = useState("");
   const [BLZ, setBlz] = useState("");
-  const [accountBalance, setAccountBalance] = useState(""); // Added accountBalance state
-  const [blzList, setBlzList] = useState([]); // State to store BLZ list
+  const [accountBalance, setAccountBalance] = useState(""); 
+  const [blzList, setBlzList] = useState([]); 
 
   useEffect(() => {
     const fetchBLZ = async () => {
       try {
-        const dummyData = [
+        /* const dummyData = [
           { BLZ: "10000" },
           { BLZ: "20000" },
           { BLZ: "30000" },
-        ];
+        ]; */
         // setBlzList(dummyData);
         // TODO checken ob enpoint gibt blz weil backend muss uns beim laden der page über get entpoint blz litse liefern und dann automatish über die blz im backend den bankname setzen
         console.log("test");
@@ -34,7 +34,6 @@ const Registration = () => {
         console.log("get enptoint blz");
         console.log(JSON.stringify(response.data));
         setBlzList(response.data);
-        // setBlzList(response.data);
       } catch (error) {
         console.error("Error fetching BLZ list", error);
       }
@@ -67,8 +66,9 @@ const Registration = () => {
         withCredentials: true,
       })
       .then((res) => {
-        // const { identification } = res.data;
-        // document.cookie = `identification=${identification}`;
+         const { identification } = res.data;
+         console.log(res.data);
+         document.cookie = `identification=${identification}`;
         navigate("/");
       })
       .catch((err) => {
@@ -256,8 +256,8 @@ const Registration = () => {
                     Choose...
                   </option>
                   {blzList.map((blz, index) => (
-                    <option key={index} value={blz.blz}>
-                      - {blz.blz}
+                    <option key={index} value={blz.BLZ}>
+                      - {blz.BLZ}
                     </option>
                   ))}
                 </select>

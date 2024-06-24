@@ -28,13 +28,13 @@ const Login = () => {
       )
       // Handle the response from backend here
       .then((res) => {
-        localStorage.setItem("isLoggedIn", "True");
+       // localStorage.setItem("isLoggedIn", "True");
         navigate("/home");
       })
 
       // Catch errors if any
       .catch((err) => {
-        alert("Login error. Please check your username and password");
+        alert("Login error. Please check your SVNR or register first");
       });
   };
 

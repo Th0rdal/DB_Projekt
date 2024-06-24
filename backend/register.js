@@ -3,7 +3,7 @@ const router = express.Router();
 const { generateUniqueIdentification } = require("./utils");
 const { generateUniqueEmployeeNr } = require("./utils");
 const { formatDate } = require("./utils");
-const DBAbstraction = require('../database/db');
+const DBAbstraction = require("../database/db");
 
 const getAllBLZ = async () => {
   try {
@@ -26,12 +26,28 @@ const checkBLZ = async (BLZ) => {
 };
 
 const insertPerson = async (
-    SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr
+  SVNR,
+  firstName,
+  lastName,
+  phoneNr1,
+  phoneNr2,
+  ZIP,
+  street,
+  city,
+  streetNr
 ) => {
   const query = `INSERT INTO person (SVNR, firstname, lastname, phoneNR1, phoneNR2, ZIP, Street, City, StreetNR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   try {
     await DBAbstraction.run(query, [
-      SVNR, firstName, lastName, phoneNr1, phoneNr2 || null, ZIP, street, city, streetNr,
+      SVNR,
+      firstName,
+      lastName,
+      phoneNr1,
+      phoneNr2 || null,
+      ZIP,
+      street,
+      city,
+      streetNr,
     ]);
   } catch (err) {
     throw err;
@@ -78,7 +94,18 @@ router.get("/get_BLZ", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   const {
-    SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr, accountBalance, accountNr, BLZ
+    SVNR,
+    firstName,
+    lastName,
+    phoneNr1,
+    phoneNr2,
+    ZIP,
+    street,
+    city,
+    streetNr,
+    accountBalance,
+    accountNr,
+    BLZ,
   } = req.body;
   console.log(JSON.stringify(req.body));
   if (
@@ -105,19 +132,29 @@ router.post("/register", async (req, res) => {
         .status(400)
         .json({ error: "BLZ does not exist in the BankName table" });
     }
-     const identification = await generateUniqueIdentification();
-     const employeeNr = await generateUniqueEmployeeNr();
-     const currentDate = new Date();
+    const identification = await generateUniqueIdentification();
+    const employeeNr = await generateUniqueEmployeeNr();
+    const currentDate = new Date();
     const formattedDate = formatDate(currentDate);
 
     await insertPerson(
-       SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr
-     );
+      SVNR,
+      firstName,
+      lastName,
+      phoneNr1,
+      phoneNr2,
+      ZIP,
+      street,
+      city,
+      streetNr
+    );
     await insertBankAccount(BLZ, accountBalance, accountNr);
     await insertEmployee(SVNR, employeeNr, accountNr, BLZ);
     await insertInstructor(SVNR, identification, formattedDate);
 
-    res.cookie("identification", identification);
+    res.cookie("identification", identification, {
+      httpOnly: true,
+    });
     res.status(200).json({ message: "User registered successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
