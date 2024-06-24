@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
-  const [svnr, setSvnr] = useState("");
+  const [SVNR, setSvnr] = useState("");
 
   const navigate = useNavigate();
 
@@ -20,19 +20,17 @@ const Login = () => {
       .post(
         "api/login",
         {
-          svnr,
+          SVNR,
         },
         {
           withCredentials: true,
         }
       )
-      // Handle the response from backend here
       .then((res) => {
-       // localStorage.setItem("isLoggedIn", "True");
-        navigate("/home");
+        console.log(res.data);
+        navigate("/dashboard");
       })
 
-      // Catch errors if any
       .catch((err) => {
         alert("Login error. Please check your SVNR or register first");
       });
@@ -64,16 +62,16 @@ const Login = () => {
           <h3 style={{ paddingTop: "30px" }}>Login</h3>
           <form style={{ paddingTop: "20px" }}>
             <div className="mb-3">
-              <label htmlFor="svnr" className="form-label">
+              <label htmlFor="SVNR" className="form-label">
                 SVNR
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="svnr"
+                id="SVNR"
                 aria-describedby="emailHelp"
                 required
-                value={svnr}
+                value={SVNR}
                 onChange={(e) => setSvnr(e.target.value)}
               />
             </div>
