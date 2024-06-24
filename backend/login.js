@@ -1,31 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database/db');
+const DBAbstraction = require('../database/db');
 
-const getUserBySVNR = (SVNR) => {
-    return new Promise((resolve, reject) => {
+const getUserBySVNR = async (SVNR) => {
+    try {
         const query = 'SELECT * FROM Person WHERE SVNR = ?';
-        db.get(query, [SVNR], (err, row) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(row);
-            }
-        });
-    });
+        const row = await DBAbstraction.get(query, [SVNR]);
+        return row;
+    }
+    catch (err){
+        throw err;
+    }
+
 };
 
-const getIdentificationBySVNR = (SVNR) => {
-    return new Promise((resolve, reject) => {
+const getIdentificationBySVNR = async (SVNR) => {
+    try {
         const query = 'SELECT Identification FROM Instructor WHERE SVNR = ?';
-        db.get(query, [SVNR], (err, row) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(row);
-            }
-        });
-    });
+        const row = await DBAbstraction.get(query, [SVNR]);
+        return row;
+    } catch (err) {
+        throw err;
+    }
+
 };
 
 
@@ -46,6 +43,7 @@ router.post('/login', async (req, res) => {
         if (!identification) {
             return res.status(404).json({ error: 'Identification not found' });
         }
+        console.log(identification)
 
         res.cookie('identification', identification, { httpOnly: true, secure: true, sameSite: 'Strict' });
 
