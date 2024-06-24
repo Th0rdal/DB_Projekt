@@ -77,8 +77,6 @@ const getNameBySVNR = async (SVNR) => {
   }
 };
 
-
-// TODO logik noch einbauane mit pdf für datnebank weil grad pdf in ulpoad mit uuid gespiehcert
 router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
   const { courseName, orgCount, prepTime } = req.body;
   const identification = req.cookies.identification;
@@ -135,22 +133,18 @@ router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
 // ++++++++++++++++++++++++++++ CREATE ADDRESSES +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 const insertAddress = async (city, ZIP, street, streetNr) => {
-  return new Promise((resolve, reject) => {
-    const query = `INSERT INTO Address (City, ZIP, Street, StreetNR) VALUES (?, ?, ?, ?)`;
-    db.run(query, [city, ZIP, street, streetNr], function (err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+  try {
+    const query = `INSERT INTO address (City, ZIP, Street, StreetNR) VALUES (?, ?, ?, ?)`;
+    const row = await DBAbstraction.run(query, [city, ZIP, street, streetNr]);
+    return row;
+  } catch (err) {
+    throw err;
+  }
 };
 router.post("/create_address", async (req, res) => {
   const { city, ZIP, street, streetNr } = req.body;
   const identification = req.cookies.identification;
 
-  console.log(JSON.stringify(req.body));
   if (!identification) {
     return res.status(400).json({ error: "Identification cookie is missing" });
   }
