@@ -16,13 +16,15 @@ const getUserBySVNR = async (SVNR) => {
 
 const getIdentificationBySVNR = async (SVNR) => {
     try {
-        const query = 'SELECT Identification FROM Instructor WHERE SVNR = ?';
+        const query = 'SELECT Identification FROM instructor WHERE SVNR = ?';
         const row = await DBAbstraction.get(query, [SVNR]);
-        return row;
+        if (row) {
+            return row.Identification;
+        }
+        return null;
     } catch (err) {
         throw err;
     }
-
 };
 
 
