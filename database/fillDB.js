@@ -57,8 +57,7 @@ const createEmployeeTable = `
         BLZ INTEGER,
         PRIMARY KEY (SVNR),
         FOREIGN KEY (SVNR) REFERENCES person(SVNR),
-        FOREIGN KEY (accountNR) REFERENCES bankAccount(accountNR),
-        FOREIGN KEY (BLZ) REFERENCES bankName(BLZ)
+        FOREIGN KEY (accountNR, BLZ) REFERENCES bankAccount(accountNR, BLZ)
     )    
 `;
 

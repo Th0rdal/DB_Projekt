@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { generateUniqueIdentification } = require("./utils");
 const { generateUniqueEmployeeNr } = require("./utils");
+const { formatDate } = require("./utils");
 const DBAbstraction = require('../database/db');
 
 const getAllBLZ = async () => {
@@ -62,7 +63,7 @@ const insertEmployee = async (SVNR, employeeNr, accountNr, BLZ) => {
 };
 
 const insertInstructor = async (SVNR, identification, currentDate) => {
-  const query = `INSERT INTO Instructor (SVNR, Identification, HiringDate) VALUES (?, ?, ?)`;
+  const query = `INSERT INTO instructor (SVNR, Identification, HiringDate) VALUES (?, ?, ?)`;
   try {
     await DBAbstraction.run(query, [SVNR, identification, currentDate]);
   } catch (err) {
@@ -81,7 +82,7 @@ router.get("/get_BLZ", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   const {
-    SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr, accountBalance, accountNr, BLZ,
+    SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr, accountBalance, accountNr, BLZ
   } = req.body;
   console.log(JSON.stringify(req.body));
   if (
@@ -111,13 +112,14 @@ router.post("/register", async (req, res) => {
      const identification = await generateUniqueIdentification();
      const employeeNr = await generateUniqueEmployeeNr();
      const currentDate = new Date();
+    const formattedDate = formatDate(currentDate);
 
     await insertPerson(
        SVNR, firstName, lastName, phoneNr1, phoneNr2, ZIP, street, city, streetNr
      );
     await insertBankAccount(BLZ, accountBalance, accountNr);
-    //await insertEmployee(SVNR, employeeNr, accountNr, BLZ);
-    await insertInstructor(SVNR, identification, currentDate);
+    await insertEmployee(SVNR, employeeNr, accountNr, BLZ);
+    await insertInstructor(SVNR, identification, formattedDate);
 
     res.cookie("identification", identification);
     res.status(200).json({ message: "User registered successfully" });

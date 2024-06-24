@@ -1,5 +1,3 @@
-const db = require('../database/db');
-const e = require("express");
 const DBAbstraction = require('../database/db');
 
 async function generateUniqueIdentification() {
@@ -36,6 +34,24 @@ async function generateUniqueEmployeeNr() {
     }
 }
 
+const formatDate = (date) => {
+    const padTo2Digits = (num) => num.toString().padStart(2, '0');
+
+    return (
+        date.getFullYear() +
+        '-' +
+        padTo2Digits(date.getMonth() + 1) +
+        '-' +
+        padTo2Digits(date.getDate()) +
+        ' ' +
+        padTo2Digits(date.getHours()) +
+        ':' +
+        padTo2Digits(date.getMinutes()) +
+        ':' +
+        padTo2Digits(date.getSeconds())
+    );
+};
+
 // function generateUniqueScriptNr() {
 //     return new Promise((resolve, reject) => {
 //         const number = Math.floor(1000000000 + Math.random() * 9000000000).toString(); // 10-stellige Zahl
@@ -55,6 +71,7 @@ async function generateUniqueEmployeeNr() {
 
 module.exports = {
     generateUniqueIdentification,
-    generateUniqueEmployeeNr
+    generateUniqueEmployeeNr,
+    formatDate
     //generateUniqueScriptNr
 };
