@@ -85,7 +85,7 @@ const createScripttypeTable = `
 
 const createCourseTable = `
     CREATE TABLE IF NOT EXISTS course(
-        courseName TEXT PRIMATE KEY,
+        courseName TEXT PRIMARY KEY,
         scriptType TEXT,
         orgCount TINYINT,
         prepTime TIME,
@@ -123,9 +123,9 @@ const createSeminarTable = `
         date DATE,
         time TIME,
         PRIMARY KEY (date, time)
-        FOREIGN KEY (addressID) REFERENCES seminar(addressID),
+        FOREIGN KEY (addressID) REFERENCES address(addressID),
         FOREIGN KEY (courseName) REFERENCES course(courseName),
-        FOREIGN KEY (instructor) REFERENCES instructor(SVNR)
+        FOREIGN KEY (instructor) REFERENCES instructor(identification)
     )
 `
 

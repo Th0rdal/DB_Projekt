@@ -237,28 +237,26 @@ router.get("/get_addresses", async (req, res) => {
 
 // ++++++++++++++++++++++++++++ CREATE SEMINAR +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-const insertSeminar = async (addressID, date, time, course) => {
-  return new Promise((resolve, reject) => {
-    const query = `INSERT INTO Seminar (AddressID, Date, Time, Course) VALUES (?, ?, ?, ?)`;
-    db.run(query, [addressID, date, time, course], function (err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+const insertSeminar = async (addressID, courseName, instructor, date, time) => {
+  try {
+    const query = `INSERT INTO Seminar (AddressID, courseName, instructor, date, time) VALUES (?, ?, ?, ?, ?)`;
+    const row = await DBAbstraction.run(query, [addressID, courseName, instructor, date, time]);
+    return row;
+  } catch (err) {
+    throw err;
+  }
 };
+
 router.post("/create_seminar", async (req, res) => {
-  const { addressID, date, time, course } = req.body;
+  const { addressID, date, time, courseName } = req.body;
   const identification = req.cookies.identification;
 
   console.log(JSON.stringify(req.body));
-  
+
   if (!identification) {
     return res.status(400).json({ error: "Identification cookie is missing" });
   }
-  if (!addressID || !date || !time || !course) {
+  if (!addressID || !date || !time || !courseName) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
@@ -266,11 +264,20 @@ router.post("/create_seminar", async (req, res) => {
     const identificationRow = await checkIdentification(identification);
     if (!identificationRow) {
       return res.status(400).json({
-        error: "identification does not exist in the Instructor table",
+        error: "Identification does not exist in the Instructor table",
       });
     }
 
-    await insertSeminar(addressID, date, time, course);
+    // Überprüfen, ob der Kurs existiert
+    const courseExists = await checkCourseName(courseName);
+    if (!courseExists) {
+      return res.status(400).json({ error: "Course does not exist" });
+    }
+
+    const formattedDate = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD
+    const formattedTime = new Date(`1970-01-01T${time}Z`).toISOString().split('T')[1].split('.')[0]; // HH:MM:SS
+
+    await insertSeminar(addressID, courseName, identification, formattedDate, formattedTime);
 
     res.status(200).json({ message: "created seminar successfully!" });
   } catch (err) {
