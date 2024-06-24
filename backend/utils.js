@@ -34,23 +34,6 @@ async function generateUniqueEmployeeNr() {
     }
 }
 
-async function generateUniquePDFNumber() {
-    const PDFNR = Math.floor(1000000000 + Math.random() * 9000000000).toString(); // 10-stellige Zahl
-
-    const checkUniquePDFNumber = 'SELECT number FROM scripttype WHERE number = ?';
-
-    try {
-        const row = await DBAbstraction.get(checkUniquePDFNumber, [PDFNR]);
-        if (row) {
-            return await generateUniquePDFNumber();
-        } else {
-            return PDFNR;
-        }
-    } catch (err) {
-        throw err;
-    }
-}
-
 const formatDate = (date) => {
     const padTo2Digits = (num) => num.toString().padStart(2, '0');
 
@@ -69,26 +52,8 @@ const formatDate = (date) => {
     );
 };
 
-// function generateUniqueScriptNr() {
-//     return new Promise((resolve, reject) => {
-//         const number = Math.floor(1000000000 + Math.random() * 9000000000).toString(); // 10-stellige Zahl
-//
-//         const checkIdentificationQuery = 'SELECT Identification FROM ScriptType WHERE Number = ?';
-//         db.get(checkIdentificationQuery, [number], (err, row) => {
-//             if (err) {
-//                 reject(err);
-//             } else if (row) {
-//                 generateUniqueIdentification().then(resolve).catch(reject);
-//             } else {
-//                 resolve(number);
-//             }
-//         });
-//     });
-// }
-
 module.exports = {
     generateUniqueIdentification,
     generateUniqueEmployeeNr,
     formatDate
-    //generateUniqueScriptNr
 };
