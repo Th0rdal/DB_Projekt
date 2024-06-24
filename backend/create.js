@@ -203,21 +203,31 @@ router.get("/get_courses", async (req, res) => {
 
 // ++++++++++++++++++++++++++++ GET ADDRESSES +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-const getAllAddresses = () => {
-  return new Promise((resolve, reject) => {
+const getAllAddresses = async () => {
+  try {
     const query = "SELECT * FROM Address";
-    db.all(query, [], (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
-  });
+    const rows = await DBAbstraction.all(query, []);
+    return rows;
+  } catch (err) {
+    throw err;
+  }
 };
 
+
 router.get("/get_addresses", async (req, res) => {
+  const identification = req.cookies.identification;
+  if (!identification) {
+    return res.status(400).json({ error: "Identification cookie is missing" });
+  }
+
   try {
+    const identificationRow = await checkIdentification(identification);
+    if (!identificationRow) {
+      return res.status(400).json({
+        error: "identification does not exist in the Instructor table",
+      });
+    }
+
     const addressList = await getAllAddresses();
     res.status(200).json(addressList);
   } catch (err) {
