@@ -11,8 +11,7 @@ const fs = require("fs").promises;
 const { checkIdentification } = require("./session");
 const { json } = require("body-parser");
 
-// TODO uplaod directory for pdf files
-// Set up multer for file upload handling
+
 const upload = multer({ dest: "uploads/" }); // Specify your upload directory
 
 // ++++++++++++++++++++++++++++ CREATE COURSES + SCRIPTTYPE +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -76,23 +75,12 @@ const getNameBySVNR = async (SVNR) => {
   }
 };
 
-router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
-  const { courseName, orgCount, prepTime } = req.body;
+const checkLogin = async (req, res, next) => {
   const identification = req.cookies.identification;
-  const pdfFile = req.file;
-
-  console.log(identification);
-
-  if (!pdfFile) {
-    return res.status(400).send("No PDF file uploaded.");
-  }
-
   if (!identification) {
     return res.status(400).json({ error: "Identification cookie is missing" });
   }
-  if (!courseName || !orgCount || !prepTime) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
+
   try {
     const identificationRow = await checkIdentification(identification);
     if (!identificationRow) {
@@ -101,6 +89,26 @@ router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
       });
     }
 
+    req.identification = identification;
+    next();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+router.post("/create_course", checkLogin, upload.single('pdfFile'), async (req, res) => {
+  const { courseName, orgCount, prepTime } = req.body;
+  const identification = req.identification;
+  const pdfFile = req.file;
+
+  if (!courseName || !orgCount || !prepTime) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+  if (!pdfFile) {
+    return res.status(400).send("No PDF file uploaded.");
+  }
+
+  try {
     const newFileName = uuid.v4() + ".pdf";
     const newPath = path.join(__dirname, "..", "uploads", newFileName);
     await fs.rename(pdfFile.path, newPath);
@@ -111,7 +119,6 @@ router.post("/create_course", upload.single("pdfFile"), async (req, res) => {
     }
 
     const { SVNR } = svnrRow;
-    console.log(SVNR);
     const nameRow = await getNameBySVNR(SVNR);
     if (!nameRow) {
       return res.status(404).send("Name not found.");
