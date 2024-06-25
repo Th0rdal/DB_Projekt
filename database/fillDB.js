@@ -125,7 +125,7 @@ const createSeminarTable = `
         PRIMARY KEY (date, time)
         FOREIGN KEY (addressID) REFERENCES address(addressID),
         FOREIGN KEY (courseName) REFERENCES course(courseName),
-        FOREIGN KEY (instructor) REFERENCES instructor(identification)
+        FOREIGN KEY (instructor) REFERENCES instructor(SVNR)
     )
 `
 
