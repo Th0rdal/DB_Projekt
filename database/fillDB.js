@@ -66,7 +66,7 @@ const createInstructorTable = `
         SVNR INTEGER PRIMARY KEY,
         Identification INTEGER UNIQUE NOT NULL,
         HiringDate DATETIME NOT NULL,    
-        FOREIGN KEY (SVNR) REFERENCES person(SVNR)
+        FOREIGN KEY (SVNR) REFERENCES employee(SVNR)
     )
 `;
 
