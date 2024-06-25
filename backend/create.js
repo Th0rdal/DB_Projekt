@@ -316,7 +316,7 @@ const getUsersSeminars = async (SVNR) => {
       FROM SEMINAR S
       JOIN ADDRESS A ON A.addressID = S.addressID
       JOIN COURSE C ON C.courseName = S.courseName
-      JOIN INSTRUCTOR I ON I.identification = S.instructor
+      JOIN INSTRUCTOR I ON I.SVNR = S.instructor
       JOIN PERSON P ON P.SVNR = I.SVNR
       WHERE S.instructor = ?;
     `;
