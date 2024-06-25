@@ -21,7 +21,6 @@ import "@coreui/coreui/dist/css/coreui.min.css";
 
 function Navbar() {
   const [visible, setVisible] = useState(false);
-  const [username, setUsername] = useState("");
 
   const navigate = useNavigate();
   const token = Cookies.get("token");
@@ -30,27 +29,13 @@ function Navbar() {
     e.preventDefault();
 
     try {
-      await axios.post("api/logout", {withCredentials: true});
-      setUsername("");
+      await axios.post("api/logout", { withCredentials: true });
+
       navigate("/");
     } catch (err) {
       console.error("Error during logout", err);
     }
   };
-
-  useEffect(() => {
-    if (!token) {
-      setUsername("");
-    } else {
-      try {
-        const tokenWithoutBearer = token.replace("Bearer ", "");
-        const decodedToken = jwtDecode(tokenWithoutBearer);
-        setUsername(decodedToken.username);
-      } catch (error) {
-        setUsername("");
-      }
-    }
-  }, [logout]);
 
   return (
     <>
@@ -87,7 +72,6 @@ function Navbar() {
               </CNavItem>
             </CNavbarNav>
             <div className="ms-auto d-flex align-items-center">
-              <p className="mb-0 me-5">Username: {username}</p>
               <CButton color="success" variant="outline" onClick={logout}>
                 Logout
               </CButton>
