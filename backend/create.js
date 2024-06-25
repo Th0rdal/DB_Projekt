@@ -309,7 +309,7 @@ router.post("/create_seminar", async (req, res) => {
   }
 });
 
-const getUsersSeminars = async (identification) => {
+const getUsersSeminars = async (SVNR) => {
   try {
     const query = `
       SELECT *
@@ -320,7 +320,7 @@ const getUsersSeminars = async (identification) => {
       JOIN PERSON P ON P.SVNR = I.SVNR
       WHERE S.instructor = ?;
     `;
-    const rows = await DBAbstraction.all(query, [identification]);
+    const rows = await DBAbstraction.all(query, [SVNR]);
     return rows;
   } catch (err) {
     throw err;
@@ -342,7 +342,9 @@ router.get("/get_seminars", async (req, res) => {
       });
     }
 
-    const seminarList = await getUsersSeminars(identification);
+    const SVNRObject = await getSVNRbyIdentification(identification);
+    const SVNR = SVNRObject.SVNR;
+    const seminarList = await getUsersSeminars(SVNR);
     console.log(seminarList);
 
     res.status(200).json(seminarList);
