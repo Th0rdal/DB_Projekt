@@ -344,6 +344,7 @@ router.get("/get_seminars", async (req, res) => {
 
     const SVNRObject = await getSVNRbyIdentification(identification);
     const SVNR = SVNRObject.SVNR;
+    console.log(SVNR);
     const seminarList = await getUsersSeminars(SVNR);
     console.log(seminarList);
 
