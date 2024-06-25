@@ -173,7 +173,7 @@ router.post("/create_address", async (req, res) => {
 
 const getAllCourses = async () => {
   try {
-    const query = "SELECT CourseName FROM Course";
+    const query = "SELECT courseName, orgCount, prepTime FROM Course";
     const rows = await DBAbstraction.all(query, []);
     return rows;
   } catch (err) {
