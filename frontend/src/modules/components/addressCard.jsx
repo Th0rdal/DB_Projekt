@@ -15,9 +15,7 @@ const AddressCard = ({ initialFile }) => {
         console.log(response);
         setAddresses(response.data || []);
 
-        if (response.data.length === 0) {
-          alert("No addresses found. Please create one first.");
-        }
+        
       } catch (error) {
         console.error("Error fetching addresses", error);
       }

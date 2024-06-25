@@ -15,9 +15,7 @@ const courseCard = ({ initialFile }) => {
         console.log(response);
         setCourses(response.data || []);
 
-        if (response.data.length === 0) {
-          alert("No courses found. Please create one first.");
-        }
+       
       } catch (error) {
         console.error("Error fetching courses", error);
       }
