@@ -263,8 +263,6 @@ router.post("/create_seminar", async (req, res) => {
   const { addressID, date, time, courseName } = req.body;
   const identification = req.cookies.identification;
 
-  console.log(JSON.stringify(req.body));
-
   if (!identification) {
     return res.status(400).json({ error: "Identification cookie is missing" });
   }
@@ -292,15 +290,62 @@ router.post("/create_seminar", async (req, res) => {
       .split("T")[1]
       .split(".")[0]; // HH:MM:SS
 
+    const SVNRObject = await getSVNRbyIdentification(identification);
+    const SVNR = SVNRObject.SVNR; // Extrahiere die SVNR aus dem Objekt
+    console.log(SVNR)
+    console.log(JSON.stringify(req.body));
+
     await insertSeminar(
       addressID,
       courseName,
-      identification,
+        parseInt(SVNR, 10),
       formattedDate,
       formattedTime
     );
 
     res.status(200).json({ message: "created seminar successfully!" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+const getUsersSeminars = async (identification) => {
+  try {
+    const query = `
+      SELECT *
+      FROM SEMINAR S
+      JOIN ADDRESS A ON A.addressID = S.addressID
+      JOIN COURSE C ON C.courseName = S.courseName
+      JOIN INSTRUCTOR I ON I.identification = S.instructor
+      JOIN PERSON P ON P.SVNR = I.SVNR
+      WHERE S.instructor = ?;
+    `;
+    const rows = await DBAbstraction.all(query, [identification]);
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
+
+
+router.get("/get_seminars", async (req, res) => {
+  const identification = req.cookies.identification;
+  if (!identification) {
+    return res.status(400).json({ error: "Identification cookie is missing" });
+  }
+
+  try {
+    const identificationRow = await checkIdentification(identification);
+    if (!identificationRow) {
+      return res.status(400).json({
+        error: "identification does not exist in the Instructor table",
+      });
+    }
+
+    const seminarList = await getUsersSeminars(identification);
+    console.log(seminarList);
+
+    res.status(200).json(seminarList);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
