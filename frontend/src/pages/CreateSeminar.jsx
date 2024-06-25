@@ -43,7 +43,7 @@ const CreateSeminar = () => {
   }, []);
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     if (!selectedAddress || !selectedCourse || !date || !time) {
       alert("All fields required");
       return;
