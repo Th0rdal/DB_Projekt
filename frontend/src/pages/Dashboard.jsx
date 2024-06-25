@@ -1,14 +1,11 @@
 import React from "react";
-import CourseCard from "../modules/components/courseCard";
-import AddressCard from "../modules/components/addressCard";
+import SeminarCard from "../modules/components/seminarCard";
 
 const Dashboard = () => {
   return (
     <div className="row">
-      <h1>Created Courses </h1>
-      <CourseCard />
-      <h1>Adresses </h1>
-      <AddressCard />
+      <h1>My Seminars </h1>
+      <SeminarCard />
     </div>
   );
 };
