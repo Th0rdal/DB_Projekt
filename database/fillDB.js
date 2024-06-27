@@ -116,10 +116,8 @@ db.exec(createBankNameTable);
 db.exec(createBankAccountTable);
 db.exec(createEmployeeTable);
 db.exec(createInstructorTable);
-db.exec(createLanguageTable);
 db.exec(createScripttypeTable);
 db.exec(createCourseTable);
-db.exec(createPresentCourseTable);
 db.exec(createAddressTable);
 db.exec(createSeminarTable);
 
