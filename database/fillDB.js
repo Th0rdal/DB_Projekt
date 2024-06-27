@@ -63,18 +63,12 @@ const createEmployeeTable = `
 
 const createInstructorTable = `
     CREATE TABLE IF NOT EXISTS instructor(
-        SVNR INTEGER PRIMARY KEY,
+        SVNR INTEGER PRIMARY KEY, 
         Identification INTEGER UNIQUE NOT NULL,
         HiringDate DATETIME NOT NULL,    
         FOREIGN KEY (SVNR) REFERENCES employee(SVNR)
     )
 `;
-
-const createLanguageTable = `
-    CREATE TABLE IF NOT EXISTS language(
-        language TEXT PRIMARY KEY
-    )
-`
 
 const createScripttypeTable = `
     CREATE TABLE IF NOT EXISTS scriptType(
@@ -90,18 +84,6 @@ const createCourseTable = `
         orgCount TINYINT,
         prepTime TIME,
         FOREIGN KEY (scriptType) REFERENCES scriptType(number)
-    )
-`
-
-const createPresentCourseTable = `
-    CREATE TABLE IF NOT EXISTS presentCourse(
-        language TEXT,
-        courseName TEXT,
-        instructor INTEGER,
-        PRIMARY KEY (language, coursename, instructor),
-        FOREIGN KEY (language) REFERENCES language(language),
-        FOREIGN KEY (courseName) REFERENCES course(courseName),  
-        FOREIGN KEY (instructor) REFERENCES instructor(SVNR)  
     )
 `
 
@@ -125,7 +107,7 @@ const createSeminarTable = `
         PRIMARY KEY (date, time)
         FOREIGN KEY (addressID) REFERENCES address(addressID),
         FOREIGN KEY (courseName) REFERENCES course(courseName),
-        FOREIGN KEY (instructor) REFERENCES instructor(identification)
+        FOREIGN KEY (instructor) REFERENCES instructor(SVNR)
     )
 `
 
@@ -134,26 +116,12 @@ db.exec(createBankNameTable);
 db.exec(createBankAccountTable);
 db.exec(createEmployeeTable);
 db.exec(createInstructorTable);
-db.exec(createLanguageTable);
 db.exec(createScripttypeTable);
 db.exec(createCourseTable);
-db.exec(createPresentCourseTable);
 db.exec(createAddressTable);
 db.exec(createSeminarTable);
 
 let stmt;
-
-// fill language table with data
-const languageInsert = `
-    INSERT INTO language (language)
-    VALUES (?)
-`
-stmt = db.prepare(languageInsert);
-stmt.run("ENGLISH");
-stmt.run("GERMAN");
-stmt.run("SPANISH");
-stmt.run("FRENCH");
-stmt.run("CHINESE");
 
 // fill bankname
 const banknameInsert = `
@@ -164,3 +132,84 @@ stmt = db.prepare(banknameInsert);
 stmt.run(123, "Bank 1");
 stmt.run(456, "Bank 2");
 stmt.run(789, "Bank 3");
+
+// dummy data
+const personInsert = `
+    INSERT INTO PERSON (SVNR, firstname, lastname, phoneNR1, phoneNR2, zip, street, city, streetNR)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+`
+
+const bankaccountInsert = `
+    INSERT INTO BANKACCOUNT (BLZ, accountBalance, accountNR)
+    VALUES (?, ?, ?)
+`
+
+const employeeInsert = `
+    INSERT INTO EMPLOYEE (SVNR, employeeNR, accountNR, BLZ)
+    VALUES (?, ?, ?, ?)
+`
+
+const instructorInsert = `
+    INSERT INTO INSTRUCTOR (SVNR, identification, hiringDate)
+    VALUES (?, ?, ?)
+`
+
+const addressInsert = `
+    INSERT INTO ADDRESS (addressID, zip, street, city, streetNR)
+    VALUES (?, ?, ?, ?, ?)
+`
+
+const scryptTypeInsert = `
+    INSERT INTO SCRIPTTYPE (number, author)
+    VALUES (?, ?)
+`
+
+const courseInsert = `
+    INSERT INTO COURSE (courseName, scripttype, orgCount, preptime)
+    VALUES (?, ?, ?, ?)
+`
+
+const seminarInsert = `
+    INSERT INTO SEMINAR (addressID, courseName, instructor, date, time)
+    VALUES (?, ?, ?, ?, ?)
+`
+
+stmt = db.prepare(personInsert)
+stmt.run(111, "Tristan", "Westreicher", 8803882210, null, 1090, "Thurngasse", "Wien", 8);
+stmt.run(222, "Aaron", "Santos", 12345, 67894, 1100, "Favoritenstraße", "Wien", 10);
+
+stmt = db.prepare(bankaccountInsert);
+stmt.run(123, 123, 123);
+stmt.run(123, 54, 12314);
+
+stmt = db.prepare(employeeInsert);
+stmt.run(111, 9095370944, 123, 123);
+stmt.run(222, 8321164949, 12314, 123);
+
+stmt = db.prepare(instructorInsert);
+stmt.run(111, 7824573544, "2024-06-27 13:11:56");
+stmt.run(222, 4614140670, "2024-06.27 13:15:46");
+
+stmt = db.prepare(addressInsert);
+stmt.run(1, 6542, "Mure", "Pfunds", 511);
+stmt.run(2, 6543, "Dorfbahnstraße", "serfaus", 4);
+stmt.run(3, 1100, "Favoritenstraße", "Wien", 10);
+stmt.run(4, 3023, "Salzstraße", "Salzburg", 40);
+
+
+stmt = db.prepare(scryptTypeInsert);
+stmt.run("script_nmap.pdf", "Tristan Westreicher");
+stmt.run("script_nmap2.pdf", "Aaron Santos");
+
+stmt = db.prepare(courseInsert)
+stmt.run("SAT", "6b3ae5bf-8dc9-4c58-ae96-404e1c511ce1.pdf", 2, 3);
+stmt.run("IoT", "2275030e-c246-4112-b373-1e13c7743a85.pdf", 4, 5);
+stmt.run("Web", "ccefd32a-e441-491a-80a3-54e527fa9318.pdf", 3, 4);
+stmt.run("Prog", "c9e62451-e837-4b6a-a175-bc1d478297fb.pdf", 4, 2);
+
+stmt = db.prepare(seminarInsert);
+stmt.run(1, "SAT", 111, "2024-06-07", "13:20:00");
+stmt.run(2, "IoT", 111, "2024-06-07", "17:20:00");
+stmt.run(1, "IoT", 222, "2024-06-06", "13:20:00");
+stmt.run(4, "Prog", 222, "2024-06-013", "13:20:00");
+

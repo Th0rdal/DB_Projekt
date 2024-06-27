@@ -1,6 +1,10 @@
 .idea
 
-uploads
+resources
+
+.gitignore
+
+
 
 # Logs
 logs

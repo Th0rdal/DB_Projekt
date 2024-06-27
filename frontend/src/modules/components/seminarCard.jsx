@@ -2,35 +2,37 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AddressCard = ({ initialFile }) => {
-  const [addresses, setAddresses] = useState([]);
-  const [courses, setCourses] = useState([]);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+const seminarCard = ({ initialFile }) => {
+  const [seminars, setSeminars] = useState([]);
 
   useEffect(() => {
-    const fetchAddresses = async () => {
+    const fetchSeminars = async () => {
       try {
-        const response = await axios.get("api/get_addresses");
+        const response = await axios.get("api/get_seminars");
         console.log(response);
-        setAddresses(response.data || []);
-
-        
+        setSeminars(response.data || []);
       } catch (error) {
-        console.error("Error fetching addresses", error);
+        console.error("Error fetching courses", error);
       }
     };
 
-    fetchAddresses();
+    fetchSeminars();
   }, []);
   return (
     <div className="container my-4">
       <div className="row">
-        {addresses.map((item, index) => (
+        {seminars.map((item, index) => (
           <div key={index} className="col-md-6 mb-3">
             <div className="card">
               <div className="card-body">
-                <h5 className="card-title">Addresse:</h5>
+                <h5 className="card-title">Seminar: {item.courseName}</h5>
+                <p className="card-text">
+                  Instructor Name: {item.firstname} {item.lastname}
+                </p>
+                <p className="card-text">Date: {item.date}</p>
+                <p className="card-text">Time: {item.time}</p>
+                <p></p>
+                <h5 className="card-title">Address:</h5>
                 <p className="card-text">
                   Street: {item.street} {item.streetNR}
                 </p>
@@ -45,4 +47,4 @@ const AddressCard = ({ initialFile }) => {
   );
 };
 
-export default AddressCard;
+export default seminarCard;
