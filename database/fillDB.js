@@ -63,7 +63,7 @@ const createEmployeeTable = `
 
 const createInstructorTable = `
     CREATE TABLE IF NOT EXISTS instructor(
-        SVNR INTEGER PRIMARY KEY,
+        SVNR INTEGER PRIMARY KEY, 
         Identification INTEGER UNIQUE NOT NULL,
         HiringDate DATETIME NOT NULL,    
         FOREIGN KEY (SVNR) REFERENCES employee(SVNR)

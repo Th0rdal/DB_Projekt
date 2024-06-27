@@ -317,7 +317,10 @@ const getUsersSeminars = async (SVNR) => {
       JOIN ADDRESS A ON A.addressID = S.addressID
       JOIN COURSE C ON C.courseName = S.courseName
       JOIN INSTRUCTOR I ON I.SVNR = S.instructor
-      JOIN PERSON P ON P.SVNR = I.SVNR
+      JOIN (
+        SELECT SVNR, firstname, lastname
+        FROM PERSON
+      ) ON P.SVNR = I.SVNR
       WHERE S.instructor = ?;
     `;
     const rows = await DBAbstraction.all(query, [SVNR]);
@@ -353,5 +356,7 @@ router.get("/get_seminars", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
 
 module.exports = router;
