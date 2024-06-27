@@ -14,9 +14,7 @@ Finally, to create the DB, navigate to the database folder and use the following
 # Start Project
 
 To start the frontend navigate to the Frontend folder and use the following command:
-
 ```npm run dev```
 
 To start the backend navigate to the Backend folder and use the following command:
-
 ```npm run start```
