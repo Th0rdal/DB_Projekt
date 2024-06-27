@@ -132,3 +132,84 @@ stmt = db.prepare(banknameInsert);
 stmt.run(123, "Bank 1");
 stmt.run(456, "Bank 2");
 stmt.run(789, "Bank 3");
+
+// dummy data
+const personInsert = `
+    INSERT INTO PERSON (SVNR, firstname, lastname, phoneNR1, phoneNR2, zip, street, city, streetNR)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+`
+
+const bankaccountInsert = `
+    INSERT INTO BANKACCOUNT (BLZ, accountBalance, accountNR)
+    VALUES (?, ?, ?)
+`
+
+const employeeInsert = `
+    INSERT INTO EMPLOYEE (SVNR, employeeNR, accountNR, BLZ)
+    VALUES (?, ?, ?, ?)
+`
+
+const instructorInsert = `
+    INSERT INTO INSTRUCTOR (SVNR, identification, hiringDate)
+    VALUES (?, ?, ?)
+`
+
+const addressInsert = `
+    INSERT INTO ADDRESS (addressID, zip, street, city, streetNR)
+    VALUES (?, ?, ?, ?, ?)
+`
+
+const scryptTypeInsert = `
+    INSERT INTO SCRIPTTYPE (number, author)
+    VALUES (?, ?)
+`
+
+const courseInsert = `
+    INSERT INTO COURSE (courseName, scripttype, orgCount, preptime)
+    VALUES (?, ?, ?, ?)
+`
+
+const seminarInsert = `
+    INSERT INTO SEMINAR (addressID, courseName, instructor, date, time)
+    VALUES (?, ?, ?, ?, ?)
+`
+
+stmt = db.prepare(personInsert)
+stmt.run(111, "Tristan", "Westreicher", 8803882210, null, 1090, "Thurngasse", "Wien", 8);
+stmt.run(222, "Aaron", "Santos", 12345, 67894, 1100, "Favoritenstraße", "Wien", 10);
+
+stmt = db.prepare(bankaccountInsert);
+stmt.run(123, 123, 123);
+stmt.run(123, 54, 12314);
+
+stmt = db.prepare(employeeInsert);
+stmt.run(111, 9095370944, 123, 123);
+stmt.run(222, 8321164949, 12314, 123);
+
+stmt = db.prepare(instructorInsert);
+stmt.run(111, 7824573544, "2024-06-27 13:11:56");
+stmt.run(222, 4614140670, "2024-06.27 13:15:46");
+
+stmt = db.prepare(addressInsert);
+stmt.run(1, 6542, "Mure", "Pfunds", 511);
+stmt.run(2, 6543, "Dorfbahnstraße", "serfaus", 4);
+stmt.run(3, 1100, "Favoritenstraße", "Wien", 10);
+stmt.run(4, 3023, "Salzstraße", "Salzburg", 40);
+
+
+stmt = db.prepare(scryptTypeInsert);
+stmt.run("script_nmap.pdf", "Tristan Westreicher");
+stmt.run("script_nmap2.pdf", "Aaron Santos");
+
+stmt = db.prepare(courseInsert)
+stmt.run("SAT", "script_nmap.pdf", 2, 3);
+stmt.run("IoT", "script_nmap2.pdf", 4, 5);
+stmt.run("Web", "script_nmap2.pdf", 3, 4);
+stmt.run("Prog", "script_nmap2.pdf", 4, 2);
+
+stmt = db.prepare(seminarInsert);
+stmt.run(1, "SAT", 111, "2024-06-07", "13:20:00");
+stmt.run(2, "IoT", 111, "2024-06-07", "17:20:00");
+stmt.run(1, "IoT", 222, "2024-06-06", "13:20:00");
+stmt.run(4, "Prog", 222, "2024-06-013", "13:20:00");
+
