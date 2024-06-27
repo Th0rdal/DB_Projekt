@@ -70,12 +70,6 @@ const createInstructorTable = `
     )
 `;
 
-const createLanguageTable = `
-    CREATE TABLE IF NOT EXISTS language(
-        language TEXT PRIMARY KEY
-    )
-`
-
 const createScripttypeTable = `
     CREATE TABLE IF NOT EXISTS scriptType(
         number TEXT PRIMARY KEY,
@@ -90,18 +84,6 @@ const createCourseTable = `
         orgCount TINYINT,
         prepTime TIME,
         FOREIGN KEY (scriptType) REFERENCES scriptType(number)
-    )
-`
-
-const createPresentCourseTable = `
-    CREATE TABLE IF NOT EXISTS presentCourse(
-        language TEXT,
-        courseName TEXT,
-        instructor INTEGER,
-        PRIMARY KEY (language, coursename, instructor),
-        FOREIGN KEY (language) REFERENCES language(language),
-        FOREIGN KEY (courseName) REFERENCES course(courseName),  
-        FOREIGN KEY (instructor) REFERENCES instructor(SVNR)  
     )
 `
 
@@ -142,18 +124,6 @@ db.exec(createAddressTable);
 db.exec(createSeminarTable);
 
 let stmt;
-
-// fill language table with data
-const languageInsert = `
-    INSERT INTO language (language)
-    VALUES (?)
-`
-stmt = db.prepare(languageInsert);
-stmt.run("ENGLISH");
-stmt.run("GERMAN");
-stmt.run("SPANISH");
-stmt.run("FRENCH");
-stmt.run("CHINESE");
 
 // fill bankname
 const banknameInsert = `
