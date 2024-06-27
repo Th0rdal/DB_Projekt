@@ -202,10 +202,10 @@ stmt.run("script_nmap.pdf", "Tristan Westreicher");
 stmt.run("script_nmap2.pdf", "Aaron Santos");
 
 stmt = db.prepare(courseInsert)
-stmt.run("SAT", "script_nmap.pdf", 2, 3);
-stmt.run("IoT", "script_nmap2.pdf", 4, 5);
-stmt.run("Web", "script_nmap2.pdf", 3, 4);
-stmt.run("Prog", "script_nmap2.pdf", 4, 2);
+stmt.run("SAT", "6b3ae5bf-8dc9-4c58-ae96-404e1c511ce1.pdf", 2, 3);
+stmt.run("IoT", "2275030e-c246-4112-b373-1e13c7743a85.pdf", 4, 5);
+stmt.run("Web", "ccefd32a-e441-491a-80a3-54e527fa9318.pdf", 3, 4);
+stmt.run("Prog", "c9e62451-e837-4b6a-a175-bc1d478297fb.pdf", 4, 2);
 
 stmt = db.prepare(seminarInsert);
 stmt.run(1, "SAT", 111, "2024-06-07", "13:20:00");
